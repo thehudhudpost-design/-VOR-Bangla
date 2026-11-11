@@ -1,1264 +1,350 @@
 <!DOCTYPE html>
-<html lang="bn" class="scroll-smooth">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>বাংলাদেশ সংবাদ | BD News Portal</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        newsRed: '#D32F2F',
-                        newsDarkRed: '#B71C1C',
-                        newsBlue: '#1A237E',
-                        newsLightBg: '#F8F9FA',
-                    },
-                    fontFamily: {
-                        bangla: ['Noto Sans Bengali', 'SolaimanLipi', 'Kalpurush', 'sans-serif'],
-                    }
-                }
+    <title>নিউজ কার্ড ও ভিডিও জেনারেটর</title>
+    <style>
+        :root {
+            --primary: #e50914;
+            --bg: #141414;
+            --card-bg: #1f1f1f;
+            --text: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
             }
         }
-    </script>
-    <!-- Google Fonts for Bangla -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        body {
-            font-family: 'Noto Sans Bengali', 'SolaimanLipi', sans-serif;
+
+        .panel {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .ticker-wrap {
-            overflow: hidden;
-            white-space: nowrap;
+
+        h2 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
         }
-        .ticker-move {
-            display: inline-block;
-            animation: ticker 35s linear infinite;
+
+        .form-group {
+            margin-bottom: 15px;
         }
-        .ticker-move:hover {
-            animation-play-state: paused;
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
         }
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            background: #2b2b2b;
+            color: #fff;
+            outline: none;
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
+
+        input[type="file"] {
+            color: #ccc;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
-        .dark ::-webkit-scrollbar-track {
-            background: #1f2937;
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: var(--primary);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #d32f2f;
-            border-radius: 3px;
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .preview-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background: #000;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
         }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-200">
+<body>
 
-    <!-- Top Info Bar -->
-    <div class="bg-slate-950 text-gray-200 text-xs py-2 px-4 border-b border-slate-800">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-            <div class="flex items-center space-x-4 space-x-reverse">
-                <span class="flex items-center gap-1.5 font-medium">
-                    <i class="far fa-calendar-alt text-newsRed"></i>
-                    <span id="current-date">বুধবার, ১১ নভেম্বর ২০২৬</span>
-                </span>
-                <span class="hidden sm:inline-flex items-center gap-1 border-r border-slate-700 pr-4">
-                    <i class="fas fa-map-marker-alt text-newsRed"></i> ঢাকা, বাংলাদেশ
-                </span>
-                <!-- Weather Info -->
-                <span class="hidden md:inline-flex items-center gap-1 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                    <i class="fas fa-cloud-sun text-amber-400"></i> ২৬° সে. (আংশিক মেঘলা)
-                </span>
-            </div>
+    <h1 style="text-align: center; margin-bottom: 20px; color: var(--primary);">Voice Of Rising Bangla - কার্ড ও ভিডিও জেনারেটর</h1>
 
-            <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Add News / Reporter Button -->
-                <button onclick="openArticleSubmitModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded font-bold transition flex items-center gap-1.5 text-xs shadow-sm">
-                    <i class="fas fa-plus-circle"></i>
-                    <span id="btn-submit-news">সংবাদ জমা দিন</span>
-                </button>
-
-                <!-- Dark Mode Toggle -->
-                <button id="theme-toggle" class="hover:text-newsRed transition-colors px-2 py-1 rounded bg-slate-800 flex items-center gap-1 border border-slate-700">
-                    <i class="fas fa-moon dark:hidden"></i>
-                    <i class="fas fa-sun hidden dark:inline text-yellow-400"></i>
-                    <span class="hidden sm:inline text-xs" id="theme-text">ডার্ক মোড</span>
-                </button>
-
-                <!-- Language Toggle -->
-                <button id="lang-toggle" onclick="toggleLanguage()" class="bg-newsRed hover:bg-newsDarkRed text-white px-2.5 py-1 rounded font-bold transition shadow-sm">
-                    English
-                </button>
-
-                <!-- Social Icons -->
-                <div class="hidden md:flex items-center gap-2.5 text-sm ml-1 border-l border-slate-800 pl-3">
-                    <a href="#" class="hover:text-blue-500 transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="hover:text-sky-400 transition"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="hover:text-red-600 transition"><i class="fab fa-youtube"></i></a>
-                    <a href="#" class="hover:text-green-500 transition"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Header / Logo Area -->
-    <header class="bg-white dark:bg-gray-800 shadow-sm transition-colors border-b border-gray-200 dark:border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="container">
+        <!-- Input Controls -->
+        <div class="panel">
+            <h2>কন্টেন্ট ইনপুট</h2>
             
-            <!-- Logo & Slogan -->
-            <div class="flex items-center gap-3">
-                <a href="#" onclick="renderMainContent(); return false;" class="group flex items-center gap-3">
-                    <div class="relative w-12 h-12 bg-gradient-to-br from-red-600 to-rose-700 text-white font-black text-2xl flex items-center justify-center rounded-xl shadow-md group-hover:scale-105 transition-transform border border-red-400/30">
-                        <i class="fas fa-bullhorn text-xl"></i>
-                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                        </span>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-none" id="site-title">
-                            ভয়েস অব <span class="text-newsRed">রাইজিং বাংলা</span>
-                        </h1>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide mt-1.5 flex items-center gap-2" id="site-tagline">
-                            <span>Voice Of Rising Bangla</span>
-                            <span class="text-newsRed">•</span>
-                            <span>সত্য ও নিরপেক্ষতার প্রতীক</span>
-                        </p>
-                    </div>
-                </a>
+            <div class="form-group">
+                <label for="category">ক্যাটাগরি / ট্যাগ:</label>
+                <input type="text" id="category" value="জাতীয়" placeholder="যেমন: জাতীয়, খেলাধুলা, রাজনীতি">
             </div>
 
-            <!-- Header E-Paper & Live Bulletin Card -->
-            <div class="w-full md:w-auto flex justify-center items-center gap-3">
-                <div class="bg-gradient-to-r from-slate-900 to-newsBlue text-white p-3 rounded-xl shadow-md flex items-center gap-3 max-w-md w-full md:w-auto">
-                    <div class="bg-newsRed/20 border border-newsRed/40 text-red-400 rounded-lg p-2 flex shrink-0 items-center justify-center">
-                        <i class="fas fa-broadcast-tower text-lg animate-pulse"></i>
-                    </div>
-                    <div>
-                        <div class="text-[10px] font-bold uppercase tracking-wider text-red-400" id="live-bulletin-title">বিশেষ সংবাদ আপডেট</div>
-                        <div class="text-xs font-semibold text-gray-100 line-clamp-1" id="live-bulletin-text">
-                            উদীয়মান বাংলাদেশের অর্থনীতি, প্রযুক্তি ও আন্তর্জাতিক অঙ্গনের তাজা বার্তা
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="headline">প্রধান শিরোনাম:</label>
+                <textarea id="headline" rows="3" placeholder="সংবাদের মূল শিরোনাম লিখুন...">জরুরি সংবাদ: ফটো কার্ড জেনারেটর সিস্টেম তৈরি করা হয়েছে</textarea>
             </div>
 
-        </div>
-    </header>
+            <div class="form-group">
+                <label for="subhead">সাব-হেডলাইন / সংক্ষিপ্ত বিবরণ:</label>
+                <input type="text" id="subhead" value="সহজেই সোশ্যাল মিডিয়ার জন্য ফটো ও ভিডিও কার্ড তৈরি করুন">
+            </div>
 
-    <!-- Navigation Menu (Sticky) -->
-    <nav class="sticky top-0 z-40 bg-newsBlue dark:bg-slate-950 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center justify-between h-12">
-                
-                <!-- Desktop Categories -->
-                <div class="hidden lg:flex items-center space-x-1 space-x-reverse overflow-x-auto" id="nav-categories">
-                    <!-- Dynamic Nav Items via JS -->
-                </div>
+            <div class="form-group">
+                <label for="bgImage">সংবাদের ছবি (Image Upload):</label>
+                <input type="file" id="bgImage" accept="image/*">
+            </div>
 
-                <!-- Search Bar & Mobile Hamburger -->
-                <div class="flex items-center justify-between w-full lg:w-auto gap-2">
-                    
-                    <!-- Search Input Box -->
-                    <div class="relative flex-1 lg:w-64">
-                        <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="সংবাদ খুঁজুন..." class="w-full bg-slate-900/80 dark:bg-gray-800 text-white placeholder-gray-400 text-sm rounded-full py-1.5 pl-4 pr-9 focus:outline-none focus:ring-2 focus:ring-newsRed transition-all border border-slate-700">
-                        <button onclick="triggerSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white px-1">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
+            <div class="form-group">
+                <label for="logoImage">লোগো (Logo Upload):</label>
+                <input type="file" id="logoImage" accept="image/*">
+            </div>
 
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-md hover:bg-slate-800 focus:outline-none">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
+            <div class="form-group">
+                <label for="bgAudio">ব্যাকগ্রাউন্ড অডিও (ভিডিওর জন্য):</label>
+                <input type="file" id="bgAudio" accept="audio/*">
+            </div>
 
+            <div class="btn-group">
+                <button onclick="renderCard()">ফটো কার্ড তৈরি করুন</button>
+                <button onclick="downloadImage()" style="background: #28a745;">ছবি ডাউনলোড</button>
+            </div>
+            
+            <div class="btn-group">
+                <button onclick="playVideoPreview()" style="background: #17a2b8;">ভিডিও অ্যানিমেশন প্রিভিউ</button>
             </div>
         </div>
 
-        <!-- Mobile Drawer Navigation -->
-        <div id="mobile-menu" class="hidden lg:hidden bg-slate-950 px-4 pt-2 pb-4 border-t border-slate-800">
-            <div class="grid grid-cols-2 gap-2" id="mobile-nav-categories">
-                <!-- Mobile Nav links populated via JS -->
-            </div>
-        </div>
-    </nav>
-
-    <!-- Breaking News Ticker Bar -->
-    <div class="bg-red-50 dark:bg-gray-800 border-y border-red-200 dark:border-gray-700 py-1.5 px-4">
-        <div class="max-w-7xl mx-auto flex items-center">
-            <div class="bg-newsRed text-white font-bold text-xs px-3 py-1 rounded flex items-center gap-1.5 shrink-0 z-10 shadow">
-                <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                <span id="ticker-label">জরুরি সংবাদ</span>
-            </div>
-            <div class="ticker-wrap w-full ml-3 text-sm text-gray-800 dark:text-gray-200">
-                <div class="ticker-move flex items-center gap-8" id="ticker-content">
-                    <!-- Dynamic Ticker items -->
-                </div>
-            </div>
+        <!-- Output Preview Panel -->
+        <div class="panel preview-area">
+            <h2>লাইভ প্রিভিউ</h2>
+            <canvas id="cardCanvas" width="1080" height="1350"></canvas>
+            <audio id="audioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
         </div>
     </div>
 
-    <!-- Main Content Area Dynamic Container -->
-    <main id="main-container" class="max-w-7xl mx-auto px-4 py-6">
-        <!-- Rendered by JS: Home Dashboard or Article View or Search View -->
-    </main>
-
-    <!-- Footer Section -->
-    <footer class="bg-gray-900 text-gray-300 border-t-4 border-newsRed mt-12">
-        <div class="max-w-7xl mx-auto px-4 py-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-                
-                <!-- Col 1: About -->
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-4 border-b-2 border-newsRed inline-block pb-1">আমাদের কথা</h3>
-                    <p class="text-xs leading-relaxed text-gray-400 mb-4" id="footer-about">
-                        'বাংলাদেশ প্রতিদিন' বাংলাদেশের একটি অন্যতম জনপ্রিয় এবং নির্ভরশীল ডিজিটাল অনলাইন সংবাদ মাধ্যম। আমরা নিরপেক্ষ ও বস্তুনিষ্ঠ সংবাদ ২৪ ঘণ্টা পরিবেশন করে থাকি।
-                    </p>
-                    <div class="flex space-x-3 space-x-reverse">
-                        <a href="#" class="w-8 h-8 bg-gray-800 hover:bg-newsRed rounded-full flex items-center justify-center text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 bg-gray-800 hover:bg-newsRed rounded-full flex items-center justify-center text-white transition-colors"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="w-8 h-8 bg-gray-800 hover:bg-newsRed rounded-full flex items-center justify-center text-white transition-colors"><i class="fab fa-youtube"></i></a>
-                        <a href="#" class="w-8 h-8 bg-gray-800 hover:bg-newsRed rounded-full flex items-center justify-center text-white transition-colors"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-
-                <!-- Col 2: Quick Links -->
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-4 border-b-2 border-newsRed inline-block pb-1" id="footer-cat-title">বিভাগসমূহ</h3>
-                    <ul class="grid grid-cols-2 gap-2 text-xs" id="footer-categories">
-                        <!-- Populated by JS -->
-                    </ul>
-                </div>
-
-                <!-- Col 3: Editorial Info -->
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-4 border-b-2 border-newsRed inline-block pb-1" id="footer-editor-title">সম্পাদকীয় দপ্তর</h3>
-                    <div class="text-xs space-y-2 text-gray-400">
-                        <p><strong class="text-gray-200">সম্পাদক ও প্রকাশক:</strong> এম. এ. রহমান</p>
-                        <p><strong class="text-gray-200">প্রধান কার্যালয়:</strong> বসুন্ধরা আবাসিক এলাকা, ঢাকা-১২২৯</p>
-                        <p><strong class="text-gray-200">ফোন:</strong> +৮৮০ ২ ৯৯৮৮৭৭৬</p>
-                        <p><strong class="text-gray-200">ইমেইল:</strong> info@newsbdprotidin.com</p>
-                    </div>
-                </div>
-
-                <!-- Col 4: Mobile App & Newsletter -->
-                <div>
-                    <h3 class="text-xl font-bold text-white mb-4 border-b-2 border-newsRed inline-block pb-1" id="footer-app-title">মোবাইল অ্যাপস</h3>
-                    <p class="text-xs text-gray-400 mb-3">যেকোনো মুহূর্তে তাজা খবর পেতে অ্যাপস ডাউনলোড করুন</p>
-                    <div class="flex flex-col gap-2">
-                        <button class="bg-gray-800 hover:bg-gray-700 text-white p-2.5 rounded-lg flex items-center gap-3 border border-gray-700 transition">
-                            <i class="fab fa-google-play text-2xl text-green-400"></i>
-                            <div class="text-left">
-                                <div class="text-[10px] uppercase text-gray-400">Get it on</div>
-                                <div class="text-xs font-bold">Google Play</div>
-                            </div>
-                        </button>
-                        <button class="bg-gray-800 hover:bg-gray-700 text-white p-2.5 rounded-lg flex items-center gap-3 border border-gray-700 transition">
-                            <i class="fab fa-apple text-2xl text-white"></i>
-                            <div class="text-left">
-                                <div class="text-[10px] uppercase text-gray-400">Download on the</div>
-                                <div class="text-xs font-bold">App Store</div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Bottom Copyright -->
-            <div class="border-t border-gray-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-4">
-                <p>&copy; ২০২৬ বাংলাদেশ প্রতিদিন | সর্বস্বত্ব সংরক্ষিত</p>
-                <div class="flex gap-4">
-                    <a href="#" class="hover:underline">গোপনীয়তা নীতি</a>
-                    <a href="#" class="hover:underline">ব্যবহারের শর্তাবলী</a>
-                    <a href="#" class="hover:underline">বিজ্ঞাপন</a>
-                    <a href="#" class="hover:underline">যোগাযোগ</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-6 hidden bg-newsRed hover:bg-newsDarkRed text-white w-10 h-10 rounded-full shadow-lg items-center justify-center transition-all z-30">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <!-- Application JavaScript Logic -->
     <script>
-        // Data Store & Internationalization State
-        let currentLang = 'bn';
-        let currentCategory = 'all';
-        let currentFontSize = 16;
-        let pollVoted = false;
-        let activeTab = 'latest'; // 'latest' or 'popular'
+        const canvas = document.getElementById('cardCanvas');
+        const ctx = canvas.getContext('2d');
+        let uploadedImg = null;
+        let uploadedLogo = null;
 
-        // Categories Configuration
-        const categories = [
-            { id: 'all', nameBn: 'প্রচ্ছদ', nameEn: 'Home' },
-            { id: 'national', nameBn: 'জাতীয়', nameEn: 'National' },
-            { id: 'politics', nameBn: 'রাজনীতি', nameEn: 'Politics' },
-            { id: 'economy', nameBn: 'অর্থনীতি', nameEn: 'Economy' },
-            { id: 'international', nameBn: 'আন্তর্জাতিক', nameEn: 'International' },
-            { id: 'sports', nameBn: 'খেলাধুলা', nameEn: 'Sports' },
-            { id: 'entertainment', nameBn: 'বিনোদন', nameEn: 'Entertainment' },
-            { id: 'tech', nameBn: 'প্রযুক্তি', nameEn: 'Technology' },
-            { id: 'opinion', nameBn: 'মতামত', nameEn: 'Opinion' }
-        ];
-
-        // Sample News Database (Voice Of Rising Bangla)
-        const newsArticles = [
-            {
-                id: 1,
-                category: 'national',
-                titleBn: 'মেট্রোরেলের নতুন রুট উদ্বোধন: ঢাকার যাতায়াতে নতুন ইতিহাস',
-                titleEn: 'New Metro Rail Route Inaugurated: A New Milestone for Dhaka Transit',
-                summaryBn: 'রাজধানী ঢাকায় যাতায়াত ব্যবস্থা আরও দ্রুত ও সহজ করতে মেট্রোরেলের নতুন এক্সটেনশন লাইনের আনুষ্ঠানিক উদ্বোধন করা হয়েছে। এতে প্রায় ১০ লাখ যাত্রী উপকৃত হবেন।',
-                summaryEn: 'The new extension line of the Metro Rail was officially launched to make transit faster and easier in Dhaka, benefiting over 1 million commuters daily.',
-                contentBn: `রাজধানী ঢাকার যানজট নিরসন এবং আধুনিক গণপরিবহন ব্যবস্থা গড়ে তোলার লক্ষ্যে মেট্রোরেলের নতুন বর্ধিত রুট আজ সকালে আনুষ্ঠানিকভাবে শুভ উদ্বোধন করা হয়েছে।<br><br>উদ্বোধনী অনুষ্ঠানে দেওয়া বক্তৃতায় সংশ্লিষ্ট কর্মকর্তা জানান, এই নতুন পথের কারণে মতিঝিল থেকে উত্তরা এবং সংলগ্ন এলাকাগুলোর দূরত্ব সময় ও খরচের দিক দিয়ে উল্লেখযোগ্যভাবে কমে আসবে। দৈনিক প্রায় ১০ লক্ষাধিক যাত্রী এই রুটে যাতায়াতের সুবিধা পাবেন।<br><br>পরিবহন বিশেষজ্ঞরা বলছেন, এই উদ্যোগ 'ভয়েস অব রাইজিং বাংলা'র মূল লক্ষ্য অনুযায়ী স্মার্ট ও উন্নত বাংলাদেশ গড়ার অগ্রযাত্রায় একটি বিশাল মাইলফলক।`,
-                contentEn: `To alleviate gridlock in Dhaka and build a modern public transit system, the extended line of the Metro Rail was inaugurated this morning.<br><br>Speaking at the event, authorities noted that travel times and costs will decrease significantly between key commercial districts. Over one million passengers will benefit daily.<br><br>Transport experts hail this as a major milestone aligned with the vision of a rising and smart nation.`,
-                image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
-                dateBn: '১০ মিনিট আগে',
-                dateEn: '10 mins ago',
-                readCount: 15420,
-                isLead: true,
-                isBreaking: true
-            },
-            {
-                id: 2,
-                category: 'economy',
-                titleBn: 'রেমিট্যান্সে রেকর্ড বৃদ্ধি: বৈদেশিক মুদ্রার রিজার্ভে স্বস্তি',
-                titleEn: 'Record Growth in Remittances: Relief for Foreign Reserves',
-                summaryBn: 'চলতি মাসে প্রবাসীদের পাঠানো আয় রেকর্ড উচ্চতায় পৌঁছেছে। এতে দেশের ব্যাংকিং খাতে তরলতা বৃদ্ধি পেয়েছে।',
-                summaryEn: 'Expatriate inward remittances reached record highs this month, strengthening national banking liquidity.',
-                contentBn: `চলতি অর্থবছরের শুরু থেকেই প্রবাসীদের পাঠানো রেমিট্যান্সের পরিমাণ আশাব্যঞ্জকভাবে বৃদ্ধি পাচ্ছে। বাংলাদেশ ব্যাংকের সর্বশেষ তথ্য অনুযায়ী, গত মাসে ব্যাংকিং চ্যানেলে প্রায় ২.৫ বিলিয়ন মার্কিন ডলার সমপরিমাণ অর্থ এসেছে।<br><br>ব্যাংক খাত সংশ্লিষ্টরা জানান, বৈধ পথে টাকা পাঠানোর জন্য বিভিন্ন প্রণোদনা দেওয়ায় ব্যাংকিং চ্যানেল ব্যবহার বৃদ্ধি পেয়েছে।`,
-                contentEn: `Inward remittances sent by expatriate workers have surged significantly. According to Bangladesh Bank data, remittances topped $2.5 billion last month via official channels.`,
-                image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80',
-                dateBn: '২৫ মিনিট আগে',
-                dateEn: '25 mins ago',
-                readCount: 9840,
-                isLead: false,
-                isBreaking: true
-            },
-            {
-                id: 3,
-                category: 'sports',
-                titleBn: 'বিশ্বকাপ টি-টোয়েন্টি: প্রথম ম্যাচে বাংলাদেশের দুর্দান্ত জয়',
-                titleEn: 'T20 World Cup: Spectacular Win for Bangladesh in Opening Match',
-                summaryBn: 'টি-টোয়েন্টি বিশ্বকাপের উদ্বোধনী খেলায় অলরাউন্ড পারফরম্যান্সে প্রতিপক্ষকে বিশাল ব্যবধানে হারালো বাংলাদেশ দল।',
-                summaryEn: 'Bangladesh displayed a stellar all-round performance to defeat their opponents convincingly in the T20 World Cup opener.',
-                contentBn: `দারুণ ব্যাটিং ও ধারালো বোলিংয়ের সমন্বয়ে বাংলাদেশ টি-টোয়েন্টি বিশ্বকাপের প্রথম ম্যাচেই অসাধারণ এক জয় তুলে নিয়েছে। অধিনায়কের চমৎকার হাফসেঞ্চুরি এবং স্পিনারদের স্পেল দলের জয়ে বড় অবদান রাখে।`,
-                contentEn: `With solid batting and sharp bowling, Bangladesh registered a convincing win in their T20 World Cup opener. The captain scored a crucial half-century while the spinners shined.`,
-                image: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=600&q=80',
-                dateBn: '১ ঘণ্টা আগে',
-                dateEn: '1 hour ago',
-                readCount: 22100,
-                isLead: false,
-                isBreaking: false
-            },
-            {
-                id: 4,
-                category: 'tech',
-                titleBn: 'কৃত্রিম বুদ্ধিমত্তা ও বাংলা ভাষা: উন্মোচিত নতুন এআই টুল',
-                titleEn: 'AI & Bengali Language: New NLP Model Launched',
-                summaryBn: 'বাংলা ভাষায় উন্নত অনুবাদ ও ভয়েস টু টেক্সট প্রসেসিংয়ের জন্য দেশীয় প্রযুক্তিবিদরা তৈরি করেছেন নতুন ভাষা মডেল।',
-                summaryEn: 'Local engineers have developed an advanced NLP model for seamless Bengali language translation and voice speech recognition.',
-                contentBn: `বাংলা ভাষাকে তথ্যপ্রযুক্তির যুগে আরো এগিয়ে নিতে দেশের একদল তরুণ প্রকৌশলী উন্মোচন করেছেন সর্বাধুনিক এআই প্রযুক্তি। এর মাধ্যমে অতি নির্ভুলভাবে ভয়েস টাইপিং এবং সাহিত্য রূপান্তর সম্ভব হবে।`,
-                contentEn: `Young Bangladeshi engineers launched a cutting-edge Bengali Natural Language Processing AI tool aimed at voice recognition and translation accuracy.`,
-                image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
-                dateBn: '২ ঘণ্টা আগে',
-                dateEn: '2 hours ago',
-                readCount: 11200,
-                isLead: false,
-                isBreaking: false
-            },
-            {
-                id: 5,
-                category: 'international',
-                titleBn: 'গ্লোবাল ক্লাইমেট সামিট: জলবায়ু অর্থায়নে বিশ্বনেতাদের নতুন প্রতিশ্রুতি',
-                titleEn: 'Global Climate Summit: Leaders Pledge New Climate Financing',
-                summaryBn: 'জলবায়ু পরিবর্তনজনিত ঝুঁকি মোকাবেলায় উদীয়মান দেশগুলোকে সহায়তার সিদ্ধান্ত নিয়েছে গ্লোবাল গ্রিন ফান্ড।',
-                summaryEn: 'World leaders at the Global Climate Summit approved enhanced green financing funds for vulnerable nations.',
-                contentBn: `আন্তর্জাতিক জলবায়ু সম্মেলনে বিশ্বনেতারা পরিবেশ বিপর্যয় রোধে এবং কার্বন নিঃসরণ কমাতে নতুন তহবিল গঠনে সম্মত হয়েছেন। এতে বাংলাদেশ সহ ক্ষতিগ্রস্ত উপকূলীয় দেশগুলো বিশেষ সুযোগ পাবে।`,
-                contentEn: `Leaders at the international climate summit reached an agreement for funds targeting climate resilience, benefiting vulnerable coastal nations like Bangladesh.`,
-                image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80',
-                dateBn: '৩ ঘণ্টা আগে',
-                dateEn: '3 hours ago',
-                readCount: 6540,
-                isLead: false,
-                isBreaking: false
-            },
-            {
-                id: 6,
-                category: 'politics',
-                titleBn: 'নির্বাচনী রোডম্যাপ ঘোষণা: রাজনৈতিক অঙ্গনে নতুন তৎপরতা',
-                titleEn: 'Election Roadmap Announced: Heightened Activity Across Political Spectrum',
-                summaryBn: 'আসন্ন জাতীয় নির্বাচনের সময়সূচি ও দিকনির্দেশনা প্রকাশ করেছে নির্বাচন কমিশন। রাজনৈতিক দলগুলোর প্রতিক্রিয়া ইতিবাচক।',
-                summaryEn: 'The Election Commission released the upcoming general election schedule. Political parties express varied initial feedback.',
-                contentBn: `সুষ্ঠু ও নিরপেক্ষ নির্বাচন আয়োজনের লক্ষে নির্বাচন কমিশন আজ পূর্ণাঙ্গ নির্বাচনী রোডম্যাপের রুপরেখা প্রকাশ করেছে। প্রধান রাজনৈতিক দলগুলো ইতিমধ্যে বিষয়টিকে স্বাগতম জানিয়েছে।`,
-                contentEn: `The Election Commission unveiled its official roadmap to prepare for the upcoming general elections, receiving constructive remarks from major parties.`,
-                image: 'https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?auto=format&fit=crop&w=600&q=80',
-                dateBn: '৪ ঘণ্টা আগে',
-                dateEn: '4 hours ago',
-                readCount: 18900,
-                isLead: false,
-                isBreaking: false
-            },
-            {
-                id: 7,
-                category: 'entertainment',
-                titleBn: 'কান চলচ্চিত্র উৎসবে প্রশংসিত বাংলাদেশী সিনেমা',
-                titleEn: 'Bangladeshi Feature Film Praised at Cannes International Film Festival',
-                summaryBn: 'আন্তর্জাতিক অঙ্গনে আবার চমক দেখালো ঢাকাই সিনেমা। উৎসবে প্রদর্শনের পর দর্শক-সমালোচকদের ভূয়সী প্রশংসা অর্জন।',
-                summaryEn: 'A contemporary Bangladeshi indie feature film earned a standing ovation from critics and audience members at Cannes.',
-                contentBn: `বিশ্বের অন্যতম সম্মানজনক চলচ্চিত্র উৎসব কান-এ বাংলাদেশের তরুণ পরিচালকের নির্মিত নতুন পূর্ণদৈর্ঘ্য চলচ্চিত্র প্রদর্শিত হয় এবং দর্শকদের থেকে স্ট্যান্ডিং ওভেশন অর্জন করে।`,
-                contentEn: `A breakthrough feature film directed by a Bangladeshi independent filmmaker received wide acclaim and standing ovation at the Cannes Film Festival.`,
-                image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80',
-                dateBn: '৫ ঘণ্টা আগে',
-                dateEn: '5 hours ago',
-                readCount: 13400,
-                isLead: false,
-                isBreaking: false
-            },
-            {
-                id: 8,
-                category: 'opinion',
-                titleBn: 'উপকূলীয় এলাকার পরিবেশ সুরক্ষা: আমাদের করণীয়',
-                titleEn: 'Protecting Coastal Ecology: Action Plan Required',
-                summaryBn: 'উপকূল অঞ্চলের বনাঞ্চল রক্ষা এবং টেকসই বাঁধ নির্মাণের মাধ্যমে প্রাকৃতিক দুর্যোগ প্রতিরোধ নিশ্চিত করতে হবে।',
-                summaryEn: 'Sustainable embankments and mangrove protection are crucial to shield coastal communities from natural disasters.',
-                contentBn: `জলবায়ু পরিবর্তনের অভিঘাত সবচেয়ে বেশি পড়ছে আমাদের দক্ষিণাঞ্চলের উপকূলীয় এলাকার জনপদে। সবুজ বেষ্টনী নির্মাণ এবং সময়োপযোগী সংস্কার ছাড়া আমাদের কোনো বিকল্প নেই।`,
-                contentEn: `The coastal communities in the southern delta face severe threats from climate impacts. Building green belts and resilient infrastructure is imperative.`,
-                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
-                dateBn: '৬ ঘণ্টা আগে',
-                dateEn: '6 hours ago',
-                readCount: 4200,
-                isLead: false,
-                isBreaking: false
+        // Image Load Handlers
+        document.getElementById('bgImage').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                uploadedImg = new Image();
+                uploadedImg.onload = renderCard;
+                uploadedImg.src = event.target.result;
             }
-        ];
+            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        });
 
-        // Ticker Announcements for Voice Of Rising Bangla
-        const tickerNewsBn = [
-            "মেট্রোরেলের নতুন রুট সফলভাবে উদ্বোধন, প্রথম দিনে বিপুল যাত্রীর সমাগম।",
-            "রেমিট্যান্স প্রবাহে নতুন রেকর্ড, রিজার্ভ ছাড়াল ২৫ বিলিয়ন ডলার।",
-            "টি-টোয়েন্টি বিশ্বকাপে জয় দিয়ে বাংলাদেশের আত্মবিশ্বাসী সূচনা।",
-            "ভয়েস অব রাইজিং বাংলা: সত্য ও নিরপেক্ষ সংবাদের প্রতিশ্রুতি।"
-        ];
-        const tickerNewsEn = [
-            "New Metro Rail route inaugurated smoothly with high passenger turnout.",
-            "Remittance inflow sets new record as foreign reserves surpass $25B.",
-            "Bangladesh wins opening match in T20 World Cup with confidence.",
-            "Voice Of Rising Bangla: Your trusted source for authentic news."
-        ];
+        document.getElementById('logoImage').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                uploadedLogo = new Image();
+                uploadedLogo.onload = renderCard;
+                uploadedLogo.src = event.target.result;
+            }
+            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        });
 
-        // Prayer Times Data (Dhaka)
-        const prayerTimes = {
-            fajr: '৪:৫২ AM',
-            dhuhr: '১১:৫২ AM',
-            asr: '৩:৪৮ PM',
-            maghrib: '৫:১৮ PM',
-            isha: '৬:৩৬ PM'
-        };
+        // Main Rendering Function for Photo Card
+        function renderCard() {
+            // Background Fill
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // --- Core Functions ---
+            // Draw News Image (Top portion)
+            if (uploadedImg) {
+                ctx.drawImage(uploadedImg, 0, 0, 1080, 800);
+            } else {
+                ctx.fillStyle = '#222';
+                ctx.fillRect(0, 0, 1080, 800);
+                ctx.fillStyle = '#666';
+                ctx.font = '40px Arial';
+                ctx.fillText('ছবি আপলোড করুন', 400, 400);
+            }
 
-        // Initialize App
-        window.onload = function() {
-            renderHeaderNav();
-            renderTicker();
-            renderMainContent();
-            setupThemeToggle();
-            
-            // Scroll to Top visibility tracker
-            window.addEventListener('scroll', () => {
-                const btn = document.getElementById('back-to-top');
-                if (window.scrollY > 300) {
-                    btn.classList.remove('hidden');
-                    btn.classList.add('flex');
+            // Bottom Gradient Overlay & Banner
+            let gradient = ctx.createLinearGradient(0, 600, 0, 1350);
+            gradient.addColorStop(0, 'rgba(0,0,0,0.1)');
+            gradient.addColorStop(0.3, 'rgba(0,0,0,0.9)');
+            gradient.addColorStop(1, '#000000');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 500, 1080, 850);
+
+            // Category Badge
+            const category = document.getElementById('category').value;
+            if(category) {
+                ctx.fillStyle = '#e50914';
+                ctx.fillRect(60, 780, 180, 45);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(category, 80, 810);
+            }
+
+            // Headline Text
+            const headline = document.getElementById('headline').value;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 44px Arial';
+            wrapText(ctx, headline, 60, 880, 960, 56);
+
+            // Sub-headline Text
+            const subhead = document.getElementById('subhead').value;
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '28px Arial';
+            wrapText(ctx, subhead, 60, 1100, 960, 38);
+
+            // Footer / Branding Bar
+            ctx.fillStyle = '#e50914';
+            ctx.fillRect(0, 1270, 1080, 80);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText('Voice Of Rising Bangla', 60, 1320);
+
+            // Logo Overlay
+            if(uploadedLogo) {
+                ctx.drawImage(uploadedLogo, 920, 1280, 100, 60);
+            }
+        }
+
+        // Text Wrapping Helper
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            let words = text.split(' ');
+            let line = '';
+            for(let n = 0; n < words.length; n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n] + ' ';
+                    y += lineHeight;
                 } else {
-                    btn.classList.add('hidden');
-                    btn.classList.remove('flex');
+                    line = testLine;
                 }
-            });
-        };
-
-        // Dark Theme Switcher
-        function setupThemeToggle() {
-            const toggleBtn = document.getElementById('theme-toggle');
-            toggleBtn.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-                const isDark = document.documentElement.classList.contains('dark');
-                document.getElementById('theme-text').textContent = isDark ? 
-                    (currentLang === 'bn' ? 'লাইট মোড' : 'Light Mode') : 
-                    (currentLang === 'bn' ? 'ডার্ক মোড' : 'Dark Mode');
-            });
+            }
+            context.fillText(line, x, y);
         }
 
-        // Language Switcher
-        function toggleLanguage() {
-            currentLang = currentLang === 'bn' ? 'en' : 'bn';
-            document.getElementById('lang-toggle').textContent = currentLang === 'bn' ? 'English' : 'বাংলা';
+        // Download Image Function
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'news-card.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Simple Canvas Video Preview Animation
+        let animFrame;
+        function playVideoPreview() {
+            let zoom = 1.0;
+            let step = 0;
             
-            // Update UI Static Labels
-            document.getElementById('current-date').textContent = currentLang === 'bn' ? 'বুধবার, ১১ নভেম্বর ২০২৬' : 'Wednesday, 11 Nov 2026';
-            document.getElementById('site-title').innerHTML = currentLang === 'bn' ? 'ভয়েস অব <span class="text-newsRed">রাইজিং বাংলা</span>' : 'Voice Of <span class="text-newsRed">Rising Bangla</span>';
-            document.getElementById('site-tagline').innerHTML = currentLang === 'bn' 
-                ? '<span>Voice Of Rising Bangla</span> <span class="text-newsRed">•</span> <span>সত্য ও নিরপেক্ষতার প্রতীক</span>' 
-                : '<span>Voice Of Rising Bangla</span> <span class="text-newsRed">•</span> <span>Symbol of Truth & Fairness</span>';
-            document.getElementById('ticker-label').textContent = currentLang === 'bn' ? 'জরুরি সংবাদ' : 'BREAKING';
-            document.getElementById('search-input').placeholder = currentLang === 'bn' ? 'সংবাদ খুঁজুন...' : 'Search news...';
-            document.getElementById('btn-submit-news').textContent = currentLang === 'bn' ? 'সংবাদ জমা দিন' : 'Submit News';
-            document.getElementById('live-bulletin-title').textContent = currentLang === 'bn' ? 'বিশেষ সংবাদ আপডেট' : 'SPECIAL NEWS UPDATE';
-            document.getElementById('live-bulletin-text').textContent = currentLang === 'bn' ? 'উদীয়মান বাংলাদেশের অর্থনীতি, প্রযুক্তি ও আন্তর্জাতিক অঙ্গনের তাজা বার্তা' : 'Latest updates on economics, tech, and international affairs of rising Bangladesh';
-            
-            // Re-render components
-            renderHeaderNav();
-            renderTicker();
-            renderMainContent();
-            renderFooter();
-        }
-
-        // Navigation Bar Rendering
-        function renderHeaderNav() {
-            const container = document.getElementById('nav-categories');
-            const mobileContainer = document.getElementById('mobile-nav-categories');
-            
-            let html = '';
-            let mobileHtml = '';
-
-            categories.forEach(cat => {
-                const name = currentLang === 'bn' ? cat.nameBn : cat.nameEn;
-                const isActive = currentCategory === cat.id;
-                const activeClass = isActive ? 'bg-newsRed text-white font-bold shadow-sm' : 'hover:bg-slate-800 text-gray-100';
-
-                html += `<button onclick="filterCategory('${cat.id}')" class="px-3 py-1.5 text-sm rounded-md transition-colors ${activeClass}">${name}</button>`;
-                mobileHtml += `<button onclick="filterCategory('${cat.id}'); toggleMobileMenu();" class="text-left px-3 py-2 text-sm rounded hover:bg-slate-900 ${isActive ? 'text-newsRed font-bold' : 'text-gray-200'}">${name}</button>`;
-            });
-
-            container.innerHTML = html;
-            mobileContainer.innerHTML = mobileHtml;
-        }
-
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Ticker Bar Rendering
-        function renderTicker() {
-            const container = document.getElementById('ticker-content');
-            const items = currentLang === 'bn' ? tickerNewsBn : tickerNewsEn;
-            
-            // Double the array for continuous ticker looping effect
-            const combined = [...items, ...items];
-            container.innerHTML = combined.map(item => `
-                <span class="flex items-center gap-2 font-medium cursor-pointer hover:text-newsRed transition-colors" onclick="filterCategory('all')">
-                    <i class="fas fa-circle text-[6px] text-newsRed"></i> ${item}
-                </span>
-            `).join('');
-        }
-
-        // Filter News by Category
-        function filterCategory(catId) {
-            currentCategory = catId;
-            renderHeaderNav();
-            renderMainContent();
-            window.scrollTo({ top: 300, behavior: 'smooth' });
-        }
-
-        // Reporter News Submission Modal
-        function openArticleSubmitModal() {
-            const modalHtml = `
-                <div id="submit-news-modal" class="fixed inset-0 z-50 overflow-y-auto bg-black/70 flex items-center justify-center p-3 sm:p-6 backdrop-blur-sm animate-fade-in">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full shadow-2xl border border-gray-300 dark:border-gray-700 overflow-hidden">
-                        
-                        <div class="bg-newsBlue text-white px-6 py-4 flex justify-between items-center">
-                            <h3 class="font-bold text-lg flex items-center gap-2">
-                                <i class="fas fa-edit text-newsRed"></i>
-                                ${currentLang === 'bn' ? 'নতুন সংবাদ প্রকাশের ফরম' : 'Submit News Article'}
-                            </h3>
-                            <button onclick="closeArticleSubmitModal()" class="text-gray-300 hover:text-white text-xl">✕</button>
-                        </div>
-
-                        <form onsubmit="handleNewsSubmission(event)" class="p-6 space-y-4 text-xs">
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">${currentLang === 'bn' ? 'সংবাদের শিরোনাম (বাংলা)' : 'News Title (Bengali)'}</label>
-                                <input type="text" id="new-title-bn" required placeholder="শিরোনাম লিখুন..." class="w-full bg-gray-50 dark:bg-gray-700 p-2.5 rounded border border-gray-300 dark:border-gray-600 text-xs">
-                            </div>
-
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">${currentLang === 'bn' ? 'সংবাদের শিরোনাম (English)' : 'News Title (English)'}</label>
-                                <input type="text" id="new-title-en" required placeholder="Enter English Title..." class="w-full bg-gray-50 dark:bg-gray-700 p-2.5 rounded border border-gray-300 dark:border-gray-600 text-xs">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">${currentLang === 'bn' ? 'বিভাগ (Category)' : 'Category'}</label>
-                                    <select id="new-category" class="w-full bg-gray-50 dark:bg-gray-700 p-2.5 rounded border border-gray-300 dark:border-gray-600 text-xs">
-                                        ${categories.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}">${currentLang==='bn'?c.nameBn:c.nameEn}</option>`).join('')}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">${currentLang === 'bn' ? 'ছবি ইউআরএল (Image URL)' : 'Image URL'}</label>
-                                    <input type="url" id="new-image" placeholder="https://..." class="w-full bg-gray-50 dark:bg-gray-700 p-2.5 rounded border border-gray-300 dark:border-gray-600 text-xs">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">${currentLang === 'bn' ? 'সংক্ষিপ্ত সারসংক্ষেপ' : 'Short Excerpt'}</label>
-                                <textarea id="new-summary" rows="2" required placeholder="সংবাদের সংক্ষেপ লিখুন..." class="w-full bg-gray-50 dark:bg-gray-700 p-2.5 rounded border border-gray-300 dark:border-gray-600 text-xs"></textarea>
-                            </div>
-
-                            <div>
-                                <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">${currentLang === 'bn' ? 'মূল বিস্তারিত সংবাদ' : 'Full Content'}</label>
-                                <textarea id="new-content" rows="4" required placeholder="বিস্তারিত বিবরণ লিখুন..." class="w-full bg-gray-50 dark:bg-gray-700 p-2.5 rounded border border-gray-300 dark:border-gray-600 text-xs"></textarea>
-                            </div>
-
-                            <div class="flex justify-end gap-2 pt-2">
-                                <button type="button" onclick="closeArticleSubmitModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded font-bold">
-                                    ${currentLang === 'bn' ? 'বাতিল' : 'Cancel'}
-                                </button>
-                                <button type="submit" class="px-5 py-2 bg-newsRed hover:bg-newsDarkRed text-white rounded font-bold transition">
-                                    ${currentLang === 'bn' ? 'প্রকাশ করুন' : 'Publish Article'}
-                                </button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeArticleSubmitModal() {
-            const modal = document.getElementById('submit-news-modal');
-            if (modal) {
-                modal.remove();
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        function handleNewsSubmission(e) {
-            e.preventDefault();
-            const titleBn = document.getElementById('new-title-bn').value;
-            const titleEn = document.getElementById('new-title-en').value;
-            const category = document.getElementById('new-category').value;
-            const imgInput = document.getElementById('new-image').value;
-            const summary = document.getElementById('new-summary').value;
-            const content = document.getElementById('new-content').value;
-
-            const newArt = {
-                id: newsArticles.length + 1,
-                category: category,
-                titleBn: titleBn,
-                titleEn: titleEn,
-                summaryBn: summary,
-                summaryEn: summary,
-                contentBn: content,
-                contentEn: content,
-                image: imgInput || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80',
-                dateBn: 'এখনই প্রকাশিত',
-                dateEn: 'Just Now',
-                readCount: 1,
-                isLead: false,
-                isBreaking: true
-            };
-
-            newsArticles.unshift(newArt);
-            closeArticleSubmitModal();
-            renderMainContent();
-
-            // Toast feedback
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-5 py-2.5 rounded-full text-xs font-bold z-50 shadow-lg flex items-center gap-2';
-            toast.innerHTML = `<i class="fas fa-check-circle"></i> ${currentLang === 'bn' ? 'আপনার সংবাদটি সফলভাবে প্রকাশিত হয়েছে!' : 'News published successfully!'}`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // Main Layout Router
-        function renderMainContent() {
-            const main = document.getElementById('main-container');
-            
-            // Filter articles based on active category
-            let filtered = newsArticles;
-            if (currentCategory !== 'all') {
-                filtered = newsArticles.filter(a => a.category === currentCategory);
+            // Audio play if uploaded
+            const audioInput = document.getElementById('bgAudio');
+            const audioPlayer = document.getElementById('audioPlayer');
+            if(audioInput.files[0]) {
+                audioPlayer.src = URL.createObjectURL(audioInput.files[0]);
+                audioPlayer.style.display = 'block';
+                audioPlayer.play();
             }
 
-            if (filtered.length === 0) {
-                main.innerHTML = `
-                    <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-                        <i class="fas fa-newspaper text-5xl text-gray-400 mb-4"></i>
-                        <h3 class="text-xl font-bold">${currentLang === 'bn' ? 'কোনো সংবাদ পাওয়া যায়নি' : 'No news found'}</h3>
-                        <p class="text-gray-500 text-sm mt-1">${currentLang === 'bn' ? 'অন্য কোনো বিভাগে চেষ্টা করুন।' : 'Please try another category.'}</p>
-                    </div>
-                `;
-                return;
+            function animate() {
+                step++;
+                zoom += 0.0005; // Slow zoom-in effect for photo
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw Zooming Image
+                if (uploadedImg) {
+                    ctx.save();
+                    ctx.scale(zoom, zoom);
+                    ctx.drawImage(uploadedImg, 0, 0, 1080, 800);
+                    ctx.restore();
+                }
+
+                // Render text & template on top
+                renderCard();
+
+                if(step < 300) { // Runs preview for ~5 seconds
+                    animFrame = requestAnimationFrame(animate);
+                }
             }
-
-            // Lead article vs others
-            const leadArticle = filtered.find(a => a.isLead) || filtered[0];
-            const secondaryArticles = filtered.filter(a => a.id !== leadArticle.id);
-
-            main.innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <!-- Left / Main Grid (2 Cols) -->
-                    <div class="lg:col-span-2 space-y-6">
-                        
-                        ${currentCategory === 'all' ? renderLeadNewsCard(leadArticle) : ''}
-                        
-                        <!-- Section Heading -->
-                        <div class="flex items-center justify-between border-b-2 border-newsRed pb-2">
-                            <h2 class="text-xl font-extrabold text-newsBlue dark:text-blue-400 flex items-center gap-2">
-                                <span class="w-2.5 h-6 bg-newsRed rounded-sm inline-block"></span>
-                                ${getCategoryName(currentCategory)}
-                            </h2>
-                            <span class="text-xs text-gray-500">${currentLang === 'bn' ? 'সর্বশেষ আপডেট' : 'Latest Updates'}</span>
-                        </div>
-
-                        <!-- Secondary Headlines Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            ${(currentCategory === 'all' ? secondaryArticles : filtered).map(article => renderNewsCard(article)).join('')}
-                        </div>
-
-                        <!-- Mid Banner E-Paper Offer Placeholder -->
-                        <div class="my-6 p-4 bg-gradient-to-r from-slate-900 via-newsBlue to-slate-900 text-white rounded-xl shadow text-center flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-700">
-                            <div class="text-left">
-                                <span class="bg-newsRed text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded">ই-পেপার সংস্কৰণ</span>
-                                <h4 class="font-bold text-lg mt-1">${currentLang === 'bn' ? 'ভয়েস অব রাইজিং বাংলা ডিজিটাল সংস্করণ' : 'Voice Of Rising Bangla Digital Edition'}</h4>
-                                <p class="text-xs text-blue-200">${currentLang === 'bn' ? 'প্রতিদিনের ই-পেপার পড়ুন সরাসরি আপনার মোবাইলে' : 'Read full daily e-paper directly on your mobile'}</p>
-                            </div>
-                            <button onclick="alert('${currentLang==='bn'?'ই-পেপার সংস্করণ শীঘ্রই আসছে!':'E-paper subscription coming soon!')}')" class="bg-newsRed text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-newsDarkRed transition shrink-0 shadow">
-                                ${currentLang === 'bn' ? 'ই-পেপার পড়ুন' : 'Read E-Paper'}
-                            </button>
-                        </div>
-
-                        <!-- Category Block: Tech & Sports Highlights -->
-                        ${currentCategory === 'all' ? renderCategoryHighlights() : ''}
-
-                    </div>
-
-                    <!-- Right Sidebar (1 Col) -->
-                    <div class="space-y-6">
-                        
-                        <!-- Widget 1: Latest / Most Read Tabs -->
-                        ${renderTabbedWidget()}
-
-                        <!-- Widget 2: Prayer Times & Weather -->
-                        ${renderWidgetPrayerWeather()}
-
-                        <!-- Widget 3: Live Poll / Public Voice -->
-                        ${renderWidgetPoll()}
-
-                        <!-- Widget 4: Social Join Card -->
-                        <div class="bg-gradient-to-br from-blue-700 to-indigo-900 text-white p-5 rounded-xl shadow-sm text-center border border-blue-600/30">
-                            <i class="fab fa-facebook text-4xl mb-2 text-white"></i>
-                            <h4 class="font-bold text-base">${currentLang === 'bn' ? 'ফেসবুকে যুক্ত থাকুন' : 'Join Us on Facebook'}</h4>
-                            <p class="text-xs text-blue-100 my-2">${currentLang === 'bn' ? 'ভয়েস অব রাইজিং বাংলার অফিসিয়াল পেইজে লাইক দিয়ে নিয়মিত খবর পান' : 'Follow Voice Of Rising Bangla official page for instant news updates'}</p>
-                            <a href="#" class="inline-block bg-white text-blue-900 font-bold px-6 py-2 rounded-full text-xs hover:bg-gray-100 transition shadow">
-                                ${currentLang === 'bn' ? 'লাইক ও ফলো করুন' : 'Follow Page'}
-                            </a>
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-
-            renderFooter();
+            cancelAnimationFrame(animFrame);
+            animate();
         }
 
-        // Render Big Lead News Card
-        function renderLeadNewsCard(article) {
-            const title = currentLang === 'bn' ? article.titleBn : article.titleEn;
-            const summary = currentLang === 'bn' ? article.summaryBn : article.summaryEn;
-            const date = currentLang === 'bn' ? article.dateBn : article.dateEn;
-
-            return `
-                <div onclick="openArticleModal(${article.id})" class="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md border border-gray-200 dark:border-gray-700 hover:shadow-xl transition duration-300">
-                    <div class="relative h-64 sm:h-80 overflow-hidden">
-                        <img src="${article.image}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                        <span class="absolute top-3 left-3 bg-newsRed text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-                            ${currentLang === 'bn' ? 'প্রধান খবর' : 'Lead Story'}
-                        </span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 text-xs text-newsRed font-semibold mb-2">
-                            <span><i class="far fa-clock"></i> ${date}</span>
-                            <span>•</span>
-                            <span>${getCategoryName(article.category)}</span>
-                        </div>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white group-hover:text-newsRed transition-colors leading-tight mb-3">
-                            ${title}
-                        </h2>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 leading-relaxed">
-                            ${summary}
-                        </p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render Standard Grid News Card
-        function renderNewsCard(article) {
-            const title = currentLang === 'bn' ? article.titleBn : article.titleEn;
-            const date = currentLang === 'bn' ? article.dateBn : article.dateEn;
-
-            return `
-                <div onclick="openArticleModal(${article.id})" class="group cursor-pointer bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition flex flex-col justify-between">
-                    <div>
-                        <div class="relative h-44 overflow-hidden">
-                            <img src="${article.image}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                            ${article.isBreaking ? `
-                                <span class="absolute bottom-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
-                                    ${currentLang === 'bn' ? 'জরুরি' : 'Breaking'}
-                                </span>
-                            ` : ''}
-                        </div>
-                        <div class="p-4">
-                            <div class="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 mb-1">
-                                <span class="text-newsRed font-medium">${getCategoryName(article.category)}</span>
-                                <span>•</span>
-                                <span>${date}</span>
-                            </div>
-                            <h3 class="font-bold text-base text-gray-900 dark:text-white group-hover:text-newsRed transition-colors line-clamp-2 leading-snug">
-                                ${title}
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="px-4 pb-3 text-xs text-gray-400 flex justify-between items-center">
-                        <span><i class="far fa-eye"></i> ${article.readCount}</span>
-                        <span class="text-newsRed group-hover:underline font-medium">${currentLang === 'bn' ? 'পড়ুন →' : 'Read →'}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Category Highlights Widget (Tech & Sports sub-sections)
-        function renderCategoryHighlights() {
-            const sportsArticles = newsArticles.filter(a => a.category === 'sports');
-            const techArticles = newsArticles.filter(a => a.category === 'tech');
-
-            return `
-                <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center justify-between mb-4 border-b pb-2">
-                        <h3 class="font-extrabold text-lg text-newsBlue dark:text-blue-400">
-                            ${currentLang === 'bn' ? 'খেলাধুলা ও প্রযুক্তি' : 'Sports & Tech'}
-                        </h3>
-                        <button onclick="filterCategory('sports')" class="text-xs text-newsRed font-bold hover:underline">
-                            ${currentLang === 'bn' ? 'সবগুলো দেখুন' : 'View All'}
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        ${[...sportsArticles, ...techArticles].slice(0, 2).map(a => `
-                            <div onclick="openArticleModal(${a.id})" class="flex gap-3 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow transition">
-                                <img src="${a.image}" class="w-24 h-20 object-cover rounded shrink-0">
-                                <div class="flex flex-col justify-between">
-                                    <h4 class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 hover:text-newsRed">
-                                        ${currentLang === 'bn' ? a.titleBn : a.titleEn}
-                                    </h4>
-                                    <span class="text-[10px] text-gray-400">${currentLang === 'bn' ? a.dateBn : a.dateEn}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Sidebar Widget 1: Latest / Most Read News Tab
-        function renderTabbedWidget() {
-            const latestList = [...newsArticles].sort((a, b) => b.id - a.id);
-            const popularList = [...newsArticles].sort((a, b) => b.readCount - a.readCount);
-            
-            const displayList = activeTab === 'latest' ? latestList : popularList;
-
-            return `
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                    <div class="flex border-b border-gray-200 dark:border-gray-700">
-                        <button onclick="switchTab('latest')" class="flex-1 py-3 text-center text-sm font-bold transition ${activeTab === 'latest' ? 'bg-newsRed text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}">
-                            ${currentLang === 'bn' ? 'সর্বশেষ' : 'Latest'}
-                        </button>
-                        <button onclick="switchTab('popular')" class="flex-1 py-3 text-center text-sm font-bold transition ${activeTab === 'popular' ? 'bg-newsRed text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}">
-                            ${currentLang === 'bn' ? 'সর্বাধিক পঠিত' : 'Most Read'}
-                        </button>
-                    </div>
-                    <div class="p-4 divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto">
-                        ${displayList.slice(0, 5).map((art, idx) => `
-                            <div onclick="openArticleModal(${art.id})" class="py-3 first:pt-0 last:pb-0 cursor-pointer group flex items-start gap-3">
-                                <span class="w-6 h-6 rounded-full bg-red-100 text-newsRed font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                                    ${idx + 1}
-                                </span>
-                                <div>
-                                    <h4 class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-newsRed transition-colors line-clamp-2">
-                                        ${currentLang === 'bn' ? art.titleBn : art.titleEn}
-                                    </h4>
-                                    <span class="text-[10px] text-gray-400 mt-1 block">${currentLang === 'bn' ? art.dateBn : art.dateEn}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function switchTab(tab) {
-            activeTab = tab;
-            renderMainContent();
-        }
-
-        // Sidebar Widget 2: Prayer Times & Weather Widget
-        function renderWidgetPrayerWeather() {
-            return `
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2 mb-3">
-                        <i class="fas fa-mosque text-newsRed"></i>
-                        <h3 class="font-bold text-sm text-gray-900 dark:text-white">
-                            ${currentLang === 'bn' ? 'আজকের নামাজের সময়সূচি (ঢাকা)' : 'Today\'s Prayer Times (Dhaka)'}
-                        </h3>
-                    </div>
-                    <div class="grid grid-cols-5 gap-1 text-center text-xs">
-                        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                            <div class="text-gray-500 dark:text-gray-400 font-semibold text-[10px]">${currentLang === 'bn' ? 'ফজর' : 'Fajr'}</div>
-                            <div class="font-bold text-gray-800 dark:text-gray-200 mt-1">${prayerTimes.fajr}</div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                            <div class="text-gray-500 dark:text-gray-400 font-semibold text-[10px]">${currentLang === 'bn' ? 'জোহর' : 'Dhuhr'}</div>
-                            <div class="font-bold text-gray-800 dark:text-gray-200 mt-1">${prayerTimes.dhuhr}</div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                            <div class="text-gray-500 dark:text-gray-400 font-semibold text-[10px]">${currentLang === 'bn' ? 'আসর' : 'Asr'}</div>
-                            <div class="font-bold text-gray-800 dark:text-gray-200 mt-1">${prayerTimes.asr}</div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                            <div class="text-gray-500 dark:text-gray-400 font-semibold text-[10px]">${currentLang === 'bn' ? 'মাগরিব' : 'Maghrib'}</div>
-                            <div class="font-bold text-gray-800 dark:text-gray-200 mt-1">${prayerTimes.maghrib}</div>
-                        </div>
-                        <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                            <div class="text-gray-500 dark:text-gray-400 font-semibold text-[10px]">${currentLang === 'bn' ? 'ইশা' : 'Isha'}</div>
-                            <div class="font-bold text-gray-800 dark:text-gray-200 mt-1">${prayerTimes.isha}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Sidebar Widget 3: Live Poll Interactive Widget
-        function renderWidgetPoll() {
-            return `
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2 mb-3">
-                        <i class="fas fa-poll text-newsRed"></i>
-                        <h3 class="font-bold text-sm text-gray-900 dark:text-white">
-                            ${currentLang === 'bn' ? 'অনলাইন জরিপ' : 'Online Opinion Poll'}
-                        </h3>
-                    </div>
-                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
-                        ${currentLang === 'bn' 
-                            ? 'মেট্রোরেলের নতুন রুট সম্প্রসারণ ঢাকার গণপরিবহন ব্যবস্থার যানজট বহুলাংশে কমাতে সক্ষম হবে কি?' 
-                            : 'Will the new metro rail expansion significantly reduce traffic congestion in Dhaka?'}
-                    </p>
-
-                    ${!pollVoted ? `
-                        <div class="space-y-2 text-xs">
-                            <button onclick="submitVote('yes')" class="w-full py-2 bg-gray-100 hover:bg-green-500 hover:text-white dark:bg-gray-700 rounded transition font-medium text-left px-3">
-                                <i class="far fa-check-circle mr-1"></i> ${currentLang === 'bn' ? 'হ্যাঁ' : 'Yes'}
-                            </button>
-                            <button onclick="submitVote('no')" class="w-full py-2 bg-gray-100 hover:bg-red-500 hover:text-white dark:bg-gray-700 rounded transition font-medium text-left px-3">
-                                <i class="far fa-times-circle mr-1"></i> ${currentLang === 'bn' ? 'না' : 'No'}
-                            </button>
-                            <button onclick="submitVote('no_comment')" class="w-full py-2 bg-gray-100 hover:bg-gray-500 hover:text-white dark:bg-gray-700 rounded transition font-medium text-left px-3">
-                                <i class="far fa-minus-circle mr-1"></i> ${currentLang === 'bn' ? 'মন্তব্য নেই' : 'No Comment'}
-                            </button>
-                        </div>
-                    ` : `
-                        <div class="space-y-3 text-xs">
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span>${currentLang === 'bn' ? 'হ্যাঁ' : 'Yes'}</span>
-                                    <span class="font-bold text-green-600">৭৮%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-green-500 h-full w-[78%]"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span>${currentLang === 'bn' ? 'না' : 'No'}</span>
-                                    <span class="font-bold text-red-600">১৮%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-red-500 h-full w-[18%]"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span>${currentLang === 'bn' ? 'মন্তব্য নেই' : 'No Comment'}</span>
-                                    <span class="font-bold text-gray-500">৪%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-gray-400 h-full w-[4%]"></div>
-                                </div>
-                            </div>
-                            <p class="text-[10px] text-green-600 font-bold text-center mt-2">
-                                <i class="fas fa-check"></i> ${currentLang === 'bn' ? 'আপনার ভোট গ্রহণ করা হয়েছে' : 'Thank you for voting!'}
-                            </p>
-                        </div>
-                    `}
-                </div>
-            `;
-        }
-
-        function submitVote(val) {
-            pollVoted = true;
-            renderMainContent();
-        }
-
-        // Render Article Detail View (Modal Dynamic Overlay)
-        function openArticleModal(articleId) {
-            const article = newsArticles.find(a => a.id === articleId);
-            if (!article) return;
-
-            const title = currentLang === 'bn' ? article.titleBn : article.titleEn;
-            const content = currentLang === 'bn' ? article.contentBn : article.contentEn;
-            const date = currentLang === 'bn' ? article.dateBn : article.dateEn;
-
-            const modalHtml = `
-                <div id="article-modal" class="fixed inset-0 z-50 overflow-y-auto bg-black/70 flex items-center justify-center p-3 sm:p-6 backdrop-blur-sm animate-fade-in">
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-300 dark:border-gray-700">
-                        
-                        <!-- Modal Sticky Header -->
-                        <div class="sticky top-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center z-10">
-                            <span class="bg-newsRed text-white text-xs font-bold px-3 py-1 rounded-full">
-                                ${getCategoryName(article.category)}
-                            </span>
-                            
-                            <!-- Font Adjuster & Close Button -->
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1 text-xs">
-                                    <button onclick="changeFontSize(-1)" class="px-2 py-1 font-bold hover:text-newsRed">A-</button>
-                                    <span class="px-1 text-gray-400">|</span>
-                                    <button onclick="changeFontSize(1)" class="px-2 py-1 font-bold hover:text-newsRed">A+</button>
-                                </div>
-                                <button onclick="closeArticleModal()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-newsRed hover:text-white transition flex items-center justify-center text-lg font-bold">
-                                    ✕
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Modal Body Content -->
-                        <div class="p-6 sm:p-8">
-                            <h1 class="text-2xl sm:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4">
-                                ${title}
-                            </h1>
-
-                            <div class="flex flex-wrap items-center justify-between gap-4 border-y border-gray-200 dark:border-gray-700 py-3 mb-6 text-xs text-gray-500 dark:text-gray-400">
-                                <div class="flex items-center gap-4">
-                                    <span><i class="far fa-user text-newsRed"></i> ${currentLang === 'bn' ? 'অনলাইন ডেস্ক' : 'Online Desk'}</span>
-                                    <span><i class="far fa-clock text-newsRed"></i> ${date}</span>
-                                    <span><i class="far fa-eye text-newsRed"></i> ${article.readCount + 1} ${currentLang === 'bn' ? 'বার পড়া হয়েছে' : 'views'}</span>
-                                </div>
-
-                                <!-- Social Share Buttons -->
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-gray-700 dark:text-gray-300 mr-1">${currentLang === 'bn' ? 'শেয়ার:' : 'Share:'}</span>
-                                    <button onclick="copyToClipboard()" class="w-7 h-7 bg-blue-600 text-white rounded-full hover:opacity-90 flex items-center justify-center"><i class="fab fa-facebook-f text-xs"></i></button>
-                                    <button onclick="copyToClipboard()" class="w-7 h-7 bg-sky-500 text-white rounded-full hover:opacity-90 flex items-center justify-center"><i class="fab fa-twitter text-xs"></i></button>
-                                    <button onclick="copyToClipboard()" class="w-7 h-7 bg-green-500 text-white rounded-full hover:opacity-90 flex items-center justify-center"><i class="fab fa-whatsapp text-xs"></i></button>
-                                    <button onclick="copyToClipboard()" class="w-7 h-7 bg-gray-600 text-white rounded-full hover:opacity-90 flex items-center justify-center" title="Copy Link"><i class="fas fa-link text-xs"></i></button>
-                                </div>
-                            </div>
-
-                            <!-- Featured Article Image -->
-                            <div class="mb-6 rounded-xl overflow-hidden shadow-sm">
-                                <img src="${article.image}" alt="${title}" class="w-full max-h-[450px] object-cover">
-                                <p class="text-[11px] text-gray-400 text-center py-2 bg-gray-50 dark:bg-gray-700 italic">
-                                    ${title} - (ছবি: ভয়েস অব রাইজিং বাংলা)
-                                </p>
-                            </div>
-
-                            <!-- Article Content Body -->
-                            <div id="article-text-body" style="font-size: ${currentFontSize}px" class="text-gray-800 dark:text-gray-200 leading-relaxed space-y-4 font-normal">
-                                ${content}
-                            </div>
-
-                            <!-- Interactive Comments Section -->
-                            <div class="mt-10 border-t border-gray-200 dark:border-gray-700 pt-6">
-                                <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                                    <i class="far fa-comments text-newsRed"></i>
-                                    ${currentLang === 'bn' ? 'পাঠকের মন্তব্য' : 'Reader Comments'}
-                                </h3>
-
-                                <!-- Comment Input Box -->
-                                <div class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-200 dark:border-gray-600 mb-6">
-                                    <textarea id="comment-input" rows="3" placeholder="${currentLang === 'bn' ? 'আপনার মতামত লিখুন...' : 'Write your comment...'}" class="w-full bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-newsRed"></textarea>
-                                    <div class="flex justify-end mt-2">
-                                        <button onclick="postComment()" class="bg-newsRed hover:bg-newsDarkRed text-white px-5 py-2 rounded-lg text-xs font-bold transition">
-                                            ${currentLang === 'bn' ? 'মন্তব্য পাঠান' : 'Post Comment'}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- Existing Comments List -->
-                                <div id="comments-list" class="space-y-3">
-                                    <div class="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg border border-gray-100 dark:border-gray-750">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="font-bold text-xs text-newsBlue dark:text-blue-400">কামরুল হাসান</span>
-                                            <span class="text-[10px] text-gray-400">১৫ মিনিট আগে</span>
-                                        </div>
-                                        <p class="text-xs text-gray-700 dark:text-gray-300">অত্যন্ত সময়োপযোগী ও চমৎকার একটি প্রতিবেদন। তথ্যবহুল নিবন্ধের জন্য ধন্যবাদ।</p>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeArticleModal() {
-            const modal = document.getElementById('article-modal');
-            if (modal) {
-                modal.remove();
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        function changeFontSize(delta) {
-            currentFontSize = Math.max(14, Math.min(24, currentFontSize + delta));
-            const textBody = document.getElementById('article-text-body');
-            if (textBody) {
-                textBody.style.fontSize = currentFontSize + 'px';
-            }
-        }
-
-        function postComment() {
-            const input = document.getElementById('comment-input');
-            const list = document.getElementById('comments-list');
-            
-            if (input && input.value.trim() !== '') {
-                const newComment = `
-                    <div class="bg-gray-50 dark:bg-gray-700/30 p-3 rounded-lg border border-gray-100 dark:border-gray-750 animate-fade-in">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-xs text-newsBlue dark:text-blue-400">${currentLang === 'bn' ? 'আপনি' : 'You'}</span>
-                            <span class="text-[10px] text-gray-400">${currentLang === 'bn' ? 'এখনই' : 'Just now'}</span>
-                        </div>
-                        <p class="text-xs text-gray-700 dark:text-gray-300">${input.value.trim()}</p>
-                    </div>
-                `;
-                list.insertAdjacentHTML('afterbegin', newComment);
-                input.value = '';
-            }
-        }
-
-        function copyToClipboard() {
-            const dummy = document.createElement('input');
-            document.body.appendChild(dummy);
-            dummy.value = window.location.href;
-            dummy.select();
-            document.execCommand('copy');
-            document.body.removeChild(dummy);
-            
-            // Show toast message
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-full text-xs z-50 shadow-lg';
-            toast.textContent = currentLang === 'bn' ? 'লিঙ্ক কপি করা হয়েছে!' : 'Link copied to clipboard!';
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-
-        // Live Dynamic Search Filter
-        function handleSearch(event) {
-            if (event.key === 'Enter') {
-                triggerSearch();
-            }
-        }
-
-        function triggerSearch() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            if (!query) {
-                renderMainContent();
-                return;
-            }
-
-            const searchResults = newsArticles.filter(art => 
-                art.titleBn.toLowerCase().includes(query) || 
-                art.titleEn.toLowerCase().includes(query) ||
-                art.summaryBn.toLowerCase().includes(query) ||
-                art.summaryEn.toLowerCase().includes(query)
-            );
-
-            const main = document.getElementById('main-container');
-            main.innerHTML = `
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold mb-2">
-                        ${currentLang === 'bn' ? `খোঁজ করা তথ্য: "${query}"` : `Search Results for: "${query}"`}
-                    </h2>
-                    <p class="text-xs text-gray-500">${searchResults.length} ${currentLang === 'bn' ? 'টি ফলাফল পাওয়া গেছে' : 'results found'}</p>
-                </div>
-                ${searchResults.length > 0 ? `
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${searchResults.map(a => renderNewsCard(a)).join('')}
-                    </div>
-                ` : `
-                    <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg">
-                        <i class="fas fa-search-minus text-4xl text-gray-400 mb-3"></i>
-                        <p class="text-sm font-medium">${currentLang === 'bn' ? 'দুঃখিত, কোনো ফলাফল পাওয়া যায়নি।' : 'No matching results found.'}</p>
-                    </div>
-                `}
-            `;
-        }
-
-        // Category helper
-        function getCategoryName(catId) {
-            const cat = categories.find(c => c.id === catId);
-            if (!cat) return currentLang === 'bn' ? 'জাতীয়' : 'National';
-            return currentLang === 'bn' ? cat.nameBn : cat.nameEn;
-        }
-
-        // Render Footer Categories List
-        function renderFooter() {
-            const container = document.getElementById('footer-categories');
-            if (container) {
-                container.innerHTML = categories.slice(1).map(cat => `
-                    <li>
-                        <button onclick="filterCategory('${cat.id}')" class="hover:text-newsRed transition-colors">
-                            ${currentLang === 'bn' ? cat.nameBn : cat.nameEn}
-                        </button>
-                    </li>
-                `).join('');
-            }
-            
-            const footerAbout = document.getElementById('footer-about');
-            if (footerAbout) {
-                footerAbout.textContent = currentLang === 'bn' 
-                    ? '\'ভয়েস অব রাইজিং বাংলা\' (Voice Of Rising Bangla) একটি বস্তুনিষ্ঠ, আধুনিক এবং নিরপেক্ষ ডিজিটাল অনলাইন নিউজ পোর্টাল। সত্য প্রকাশের অঙ্গীকার নিয়ে আমরা প্রতিদিনের ঘটনাপ্রবাহ ও বিশ্লেষণী সংবাদ পাঠকশ্রেণির কাছে পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ।' 
-                    : '\'Voice Of Rising Bangla\' is a modern, reliable, and independent digital online news portal committed to delivering fearless truth and unbiased news daily.';
-            }
-        }
+        // Initial Render
+        renderCard();
     </script>
 </body>
-      </html>
+</html>
