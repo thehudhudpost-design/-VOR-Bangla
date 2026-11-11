@@ -3,202 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Of Rising Bangla - ফটো কার্ড ও রিল জেনারেটর</title>
+    <title>Voice Of Rising Bangla - ফটো কার্ড ও অ্যাডভান্সড ভিডিও রিল মেকার</title>
     <style>
         :root {
             --primary: #e50914;
-            --bg: #141414;
-            --card-bg: #1f1f1f;
+            --primary-dark: #b20710;
+            --bg: #121212;
+            --panel-bg: #1e1e1e;
+            --input-bg: #2a2a2a;
             --text: #ffffff;
-            --input-bg: #2b2b2b;
+            --accent: #00e676;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 15px; }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 20px;
-        }
+        header { text-align: center; margin-bottom: 20px; padding: 15px; background: var(--panel-bg); border-radius: 10px; border-bottom: 3px solid var(--primary); }
+        header h1 { color: var(--primary); font-size: 26px; margin-bottom: 5px; }
+        header p { color: #aaa; font-size: 13px; }
 
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        .app-container { max-width: 1250px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
+        @media (max-width: 900px) { .app-container { grid-template-columns: 1fr; } }
 
-        header h1 {
-            color: var(--primary);
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-
-        .mode-switch {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
+        .panel { background: var(--panel-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        .mode-switch { display: flex; gap: 10px; margin-bottom: 20px; }
         .mode-btn {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--primary);
-            background: transparent;
-            color: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
+            flex: 1; padding: 12px; border: 1px solid var(--primary); background: transparent;
+            color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
+        .mode-btn.active { background: var(--primary); }
 
-        .mode-btn.active {
-            background: var(--primary);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            color: #ccc;
-        }
-
+        .section-title { font-size: 15px; font-weight: bold; margin-bottom: 10px; color: var(--accent); }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #ccc; }
+        
         input[type="text"], textarea, select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #333;
-            background: var(--input-bg);
-            color: #fff;
-            outline: none;
-            font-size: 15px;
+            width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: var(--input-bg); color: #fff; outline: none; font-size: 14px;
         }
 
-        input[type="file"] {
-            color: #ccc;
-            font-size: 14px;
+        /* Voice Options Grid */
+        .voice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 5px; }
+        .voice-card {
+            background: var(--input-bg); border: 2px solid #333; padding: 10px; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s;
         }
+        .voice-card.active { border-color: var(--accent); background: #003822; }
+        .voice-card h4 { font-size: 13px; margin-bottom: 3px; }
+        .voice-card p { font-size: 10px; color: #aaa; }
+
+        /* Video Styles Selector */
+        .style-grid { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
+        .style-card {
+            min-width: 95px; height: 60px; background: #2a2a2a; border: 2px solid #444; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; padding: 5px;
+        }
+        .style-card.active { border-color: var(--accent); background: #1c3d27; }
 
         .btn-action {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 6px;
-            background: var(--primary);
-            color: #fff;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.2s;
+            width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--primary);
+            color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s;
         }
+        .btn-action:hover { opacity: 0.9; }
+        .btn-green { background: #28a745; }
+        .btn-blue { background: #17a2b8; }
 
-        .btn-action:hover {
-            opacity: 0.9;
-        }
-
-        .btn-green {
-            background: #28a745;
-        }
-
-        .btn-blue {
-            background: #17a2b8;
-        }
-
-        .preview-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        canvas {
-            max-width: 100%;
-            height: auto;
-            border: 2px solid #333;
-            border-radius: 8px;
-            background: #000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-        }
-
-        #statusText {
-            margin-top: 15px;
-            color: #ffca28;
-            font-weight: bold;
-            text-align: center;
-        }
+        .preview-box { display: flex; flex-direction: column; align-items: center; position: sticky; top: 15px; }
+        canvas { max-width: 100%; height: auto; border: 2px solid #333; border-radius: 10px; background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.8); }
+        #statusText { margin-top: 12px; font-size: 13px; color: #ffca28; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚</h1>
-        <p style="color: #aaa; font-size: 14px;">ফটো কার্ড ও ভিডিও রিল জেনারেটর (সম্পূর্ণ ফ্রি ও ওপেন ভার্সন)</p>
+        <p>ফটো কার্ড (১৫টি টেমপ্লেট) ও অ্যাডভান্সড ভিডিও রিল জেনারেটর</p>
     </header>
 
-    <div class="main-container">
-        <!-- Control Panel -->
+    <div class="app-container">
+        <!-- Control Form Panel -->
         <div class="panel">
             <div class="mode-switch">
-                <button class="mode-btn active" id="btnCardMode" onclick="setMode('card')">ফটো কার্ড মোড</button>
-                <button class="mode-btn" id="btnReelMode" onclick="setMode('reel')">রিল ভিডিও মোড</button>
+                <button class="mode-btn active" id="btnCardMode" onclick="setMode('card')">ফটো কার্ড মোড (4:5)</button>
+                <button class="mode-btn" id="btnReelMode" onclick="setMode('reel')">রিল ভিডিও মোড (9:16)</button>
+            </div>
+
+            <!-- Template Selector (Only for Photo Card Mode) -->
+            <div class="form-group" id="templateGroup">
+                <label for="templateSelect">ডিজাইন টেমপ্লেট নির্বাচন করুন (১৫টি অপশন):</label>
+                <select id="templateSelect" onchange="updateCanvas()">
+                    <option value="1">১. ব্রেকিং নিউজ (Breaking News)</option>
+                    <option value="2" selected>২. সাধারণ নিউজ (Standard News)</option>
+                    <option value="3">৩. উক্তি / কোট কার্ড (Quote)</option>
+                    <option value="4">৪. শোক সংবাদ (Condolence)</option>
+                    <option value="5">৫. খেলাধুলা (Sports Special)</option>
+                    <option value="6">৬. জনমত পোল (Opinion Poll)</option>
+                    <option value="7">৭. জরুরি সতর্কতা (Alert/Warning)</option>
+                    <option value="8">৮. অর্থনীতি ও শেয়ারবাজার (Business)</option>
+                    <option value="9">৯. আন্তর্জাতিক সংবাদ (International)</option>
+                    <option value="10">১০. বিনোদন ও গ্ল্যামার (Entertainment)</option>
+                    <option value="11">১১. রাজনীতি (Politics Special)</option>
+                    <option value="12">১২. আবহাওয়া বার্তা (Weather Update)</option>
+                    <option value="13">১৩. শুভেচ্ছা ও জন্মদিন (Greetings)</option>
+                    <option value="14">১৪. ইতিহাসে আজকের দিন (History)</option>
+                    <option value="15">১৫. ফ্যাক্ট চেক (Fact Check)</option>
+                </select>
+            </div>
+
+            <!-- Video Styles Selector (Only for Reel Mode) -->
+            <div class="form-group" id="videoStyleGroup" style="display:none;">
+                <div class="section-title">ভিডিও লেআউট স্টাইল</div>
+                <div class="style-grid">
+                    <div class="style-card active" onclick="setStyle('card')" id="st-card">নিউজ কার্ড</div>
+                    <div class="style-card" onclick="setStyle('tv')" id="st-tv">টিভি নিউজ</div>
+                    <div class="style-card" onclick="setStyle('clean')" id="st-clean">ক্লিন ক্যাপশন</div>
+                    <div class="style-card" onclick="setStyle('big')" id="st-big">বড় অক্ষর</div>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="category">ক্যাটাগরি / বিষয়:</label>
+                <label for="category">ক্যাটাগরি / ট্যাগ:</label>
                 <input type="text" id="category" value="জাতীয়" oninput="updateCanvas()">
             </div>
 
             <div class="form-group">
-                <label for="headline">সংবাদের শিরোনাম / ক্যাপশন:</label>
-                <textarea id="headline" rows="3" oninput="updateCanvas()">জরুরি সংবাদ: ফটো কার্ড ও ভিডিও জেনারেটর সিস্টেম সফলভাবে চালু হয়েছে!</textarea>
+                <label for="headline">সংবাদের শিরোনাম / মূল তথ্য:</label>
+                <textarea id="headline" rows="3" oninput="updateCanvas()">অ্যাডভান্সড ফটো কার্ড ও রিল জেনারেটর সিস্টেম একসাথে যুক্ত করা হয়েছে!</textarea>
             </div>
 
             <div class="form-group" id="subheadGroup">
-                <label for="subhead">সাব-হেডলাইন (ঐচ্ছিক):</label>
-                <input type="text" id="subhead" value="সোশ্যাল মিডিয়ার জন্য দ্রুত কন্টেন্ট তৈরি করুন" oninput="updateCanvas()">
+                <label for="subhead">সাব-হেডলাইন / স্পিকার নাম:</label>
+                <input type="text" id="subhead" value="এক ক্লিকেই পছন্দমতো টেমপ্লেট ও ভিডিও রিল তৈরি করুন" oninput="updateCanvas()">
+            </div>
+
+            <!-- Audio Options (Only for Reel Mode) -->
+            <div class="form-group" id="audioSectionGroup" style="display:none;">
+                <div class="section-title">কণ্ঠ ও অডিও কনফিগারেশন</div>
+                <div class="voice-grid">
+                    <div class="voice-card active" onclick="selectVoiceOpt('ai')" id="vOpt-ai">
+                        <h4>🤖 AI কণ্ঠ</h4>
+                        <p>পেশাদার ভয়েস জেনারেট</p>
+                    </div>
+                    <div class="voice-card" onclick="selectVoiceOpt('music')" id="vOpt-music">
+                        <h4>🎵 ব্যাকগ্রাউন্ড মিউজিক</h4>
+                        <p>মিউজিক ট্র্যাক যুক্ত করুন</p>
+                    </div>
+                </div>
+                <div id="customAudioGroup" style="display:none; margin-top: 10px;">
+                    <label>অডিও ফাইল আপলোড করুন:</label>
+                    <input type="file" id="bgAudio" accept="audio/*">
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="bgImage">সংবাদের ছবি (একাধিক সিলেক্ট করা যাবে):</label>
-                <input type="file" id="bgImage" accept="image/*" multiple>
+                <label for="bgImage">মিডিয়া আপলোড (ছবি বা একাধিক ফাইল):</label>
+                <input type="file" id="bgImage" accept="image/*,video/*" multiple>
             </div>
 
             <div class="form-group">
-                <label for="logoImage">লোগো (Logo Upload):</label>
+                <label for="logoImage">লোগো আপলোড (ঐচ্ছিক):</label>
                 <input type="file" id="logoImage" accept="image/*">
-            </div>
-
-            <div class="form-group" id="audioGroup" style="display: none;">
-                <label for="bgAudio">ব্যাকগ্রাউন্ড অডিও (ভিডিও এক্সপোর্টের জন্য):</label>
-                <input type="file" id="bgAudio" accept="audio/*">
             </div>
 
             <!-- Action Buttons -->
@@ -208,13 +171,13 @@
 
             <div id="reelActions" style="display: none;">
                 <button class="btn-action btn-blue" onclick="playReelPreview()">রিল এনিমেশন প্রিভিউ</button>
-                <button class="btn-action btn-green" onclick="exportReelVideo()">ভিডিও এক্সপোর্ট (MP4/WebM)</button>
+                <button class="btn-action btn-green" onclick="exportReelVideo()">ভিডিও এক্সপোর্ট (MP4)</button>
             </div>
         </div>
 
-        <!-- Canvas Preview Panel -->
-        <div class="panel preview-area">
-            <h2 style="font-size: 18px; margin-bottom: 15px; color: var(--primary);" id="previewTitle">ফটো কার্ড প্রিভিউ</h2>
+        <!-- Preview Area -->
+        <div class="panel preview-box">
+            <div class="section-title" id="previewTitle">ফটো কার্ড প্রিভিউ (4:5)</div>
             <canvas id="mainCanvas" width="1080" height="1350"></canvas>
             <p id="statusText"></p>
             <audio id="audioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
@@ -224,7 +187,9 @@
     <script>
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
-        let currentMode = 'card'; // 'card' or 'reel'
+        let currentMode = 'card';
+        let selectedStyle = 'card';
+        let selectedVoice = 'ai';
 
         let loadedImages = [];
         let uploadedLogo = null;
@@ -239,22 +204,38 @@
             document.getElementById('cardActions').style.display = mode === 'card' ? 'block' : 'none';
             document.getElementById('reelActions').style.display = mode === 'reel' ? 'block' : 'none';
             document.getElementById('subheadGroup').style.display = mode === 'card' ? 'block' : 'none';
-            document.getElementById('audioGroup').style.display = mode === 'reel' ? 'block' : 'none';
+            document.getElementById('templateGroup').style.display = mode === 'card' ? 'block' : 'none';
+            document.getElementById('videoStyleGroup').style.display = mode === 'reel' ? 'block' : 'none';
+            document.getElementById('audioSectionGroup').style.display = mode === 'reel' ? 'block' : 'none';
 
             if(mode === 'card') {
                 canvas.width = 1080;
-                canvas.height = 1350; // Aspect Ratio 4:5
+                canvas.height = 1350;
                 document.getElementById('previewTitle').innerText = 'ফটো কার্ড প্রিভিউ (4:5)';
             } else {
                 canvas.width = 1080;
-                canvas.height = 1920; // Aspect Ratio 9:16 (Reel/Story)
+                canvas.height = 1920;
                 document.getElementById('previewTitle').innerText = 'রিল ভিডিও প্রিভিউ (9:16)';
             }
             clearInterval(animInterval);
             updateCanvas();
         }
 
-        // Handle Image Uploads
+        function selectVoiceOpt(opt) {
+            selectedVoice = opt;
+            document.querySelectorAll('.voice-card').forEach(el => el.classList.remove('active'));
+            document.getElementById(`vOpt-${opt}`).classList.add('active');
+            document.getElementById('customAudioGroup').style.display = (opt === 'music') ? 'block' : 'none';
+        }
+
+        function setStyle(style) {
+            selectedStyle = style;
+            document.querySelectorAll('.style-card').forEach(el => el.classList.remove('active'));
+            document.getElementById(`st-${style}`).classList.add('active');
+            updateCanvas();
+        }
+
+        // Image/Media Loader
         document.getElementById('bgImage').addEventListener('change', function(e) {
             loadedImages = [];
             const files = Array.from(e.target.files);
@@ -274,7 +255,6 @@
             });
         });
 
-        // Handle Logo Upload
         document.getElementById('logoImage').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
@@ -285,14 +265,15 @@
             if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
         });
 
-        // Core Canvas Renderer
+        // Unified Canvas Frame Renderer
         function drawCanvasFrame(imgIdx = 0, zoom = 1.0) {
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            const templateId = document.getElementById('templateSelect').value;
             const imgHeight = currentMode === 'card' ? 800 : 1200;
 
-            // Draw Background Image with Dynamic Zoom
+            ctx.fillStyle = (templateId === '4' && currentMode === 'card') ? '#050505' : '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Media/Image
             if (loadedImages.length > 0 && loadedImages[imgIdx]) {
                 ctx.save();
                 if(zoom > 1.0) {
@@ -308,63 +289,129 @@
                 ctx.fillRect(0, 0, canvas.width, imgHeight);
                 ctx.fillStyle = '#666';
                 ctx.font = '36px Arial';
-                ctx.fillText('ছবি আপলোড করুন', canvas.width / 2 - 120, imgHeight / 2);
+                ctx.fillText('ছবি বা ভিডিও আপলোড করুন', canvas.width / 2 - 180, imgHeight / 2);
             }
 
-            // Dark Overlay Gradient
-            let gradient;
+            // Render Overlays based on Mode
             if(currentMode === 'card') {
-                gradient = ctx.createLinearGradient(0, 550, 0, 1350);
-                gradient.addColorStop(0, 'rgba(0,0,0,0)');
-                gradient.addColorStop(0.3, 'rgba(0,0,0,0.85)');
-                gradient.addColorStop(1, '#000000');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 550, 1080, 800);
+                applyTemplateOverlay(templateId, imgHeight);
             } else {
-                gradient = ctx.createLinearGradient(0, 900, 0, 1920);
-                gradient.addColorStop(0, 'rgba(0,0,0,0)');
-                gradient.addColorStop(0.4, 'rgba(0,0,0,0.9)');
-                gradient.addColorStop(1, '#000000');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 900, 1080, 1020);
+                applyReelStyleOverlay();
             }
 
-            // Category Badge
-            const category = document.getElementById('category').value;
-            if(category) {
-                const catY = currentMode === 'card' ? 780 : 1380;
-                ctx.fillStyle = '#e50914';
-                ctx.fillRect(60, catY, 200, 48);
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 26px Arial';
-                ctx.fillText(category, 80, catY + 34);
-            }
+            // Footer Branding Bar
+            drawFooter(templateId);
+        }
 
-            // Headline Text
+        // 15 Templates Logic for Photo Card
+        function applyTemplateOverlay(templateId, imgHeight) {
             const headline = document.getElementById('headline').value;
-            const headY = currentMode === 'card' ? 880 : 1480;
+            const subhead = document.getElementById('subhead').value;
+            const category = document.getElementById('category').value;
+            const headY = 880;
+
+            let mainColor = '#e50914';
+            if(templateId === '1') mainColor = '#ff0000';
+            else if(templateId === '3') mainColor = '#ff9800';
+            else if(templateId === '4') mainColor = '#444444';
+            else if(templateId === '5') mainColor = '#00c853';
+            else if(templateId === '7') mainColor = '#ffd600';
+            else if(templateId === '8') mainColor = '#00e676';
+            else if(templateId === '9') mainColor = '#29b6f6';
+            else if(templateId === '10') mainColor = '#e91e63';
+            else if(templateId === '13') mainColor = '#ffb300';
+            else if(templateId === '15') mainColor = '#d50000';
+
+            let grad = ctx.createLinearGradient(0, imgHeight - 250, 0, canvas.height);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.3, 'rgba(0,0,0,0.85)');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, imgHeight - 250, canvas.width, canvas.height - (imgHeight - 250));
+
+            if(category) {
+                ctx.fillStyle = mainColor;
+                ctx.fillRect(60, 780, 220, 48);
+                ctx.fillStyle = (templateId === '7' || templateId === '13') ? '#000' : '#fff';
+                ctx.font = 'bold 26px Arial';
+                ctx.fillText(category, 80, 814);
+            }
+
+            if(templateId === '15') {
+                ctx.save();
+                ctx.strokeStyle = '#ff1744'; ctx.lineWidth = 6;
+                ctx.strokeRect(750, 700, 260, 90);
+                ctx.fillStyle = '#ff1744'; ctx.font = 'bold 36px Arial';
+                ctx.fillText('সত্যতা যাচাই', 770, 758);
+                ctx.restore();
+            }
+
+            if(templateId === '3') {
+                ctx.fillStyle = 'rgba(255, 152, 0, 0.4)';
+                ctx.font = 'bold 160px Georgia';
+                ctx.fillText('“', 50, headY - 10);
+            }
+
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 44px Arial';
             wrapText(ctx, headline, 60, headY, 960, 58);
 
-            // Sub-headline (Only for Photo Card)
-            if(currentMode === 'card') {
-                const subhead = document.getElementById('subhead').value;
-                ctx.fillStyle = '#d1d1d1';
+            if(subhead) {
+                ctx.fillStyle = (templateId === '3') ? '#ffcc80' : '#d1d1d1';
                 ctx.font = '28px Arial';
                 wrapText(ctx, subhead, 60, 1110, 960, 40);
             }
+        }
 
-            // Footer Branding
+        // Reel Video Style Overlays
+        function applyReelStyleOverlay() {
+            const headline = document.getElementById('headline').value;
+            const category = document.getElementById('category').value;
+
+            if (selectedStyle === 'card') {
+                let grad = ctx.createLinearGradient(0, 1000, 0, 1920);
+                grad.addColorStop(0, 'rgba(0,0,0,0)');
+                grad.addColorStop(0.4, 'rgba(0,0,0,0.95)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 1000, 1080, 920);
+
+                ctx.fillStyle = '#00e676';
+                ctx.fillRect(60, 1380, 240, 55);
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 30px Arial';
+                ctx.fillText(category || 'ব্রেকিং নিউজ', 80, 1418);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 48px Arial';
+                wrapText(ctx, headline, 60, 1490, 960, 60);
+
+            } else if (selectedStyle === 'tv') {
+                ctx.fillStyle = '#e50914';
+                ctx.fillRect(0, 1450, 1080, 90);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 42px Arial';
+                ctx.fillText(headline, 50, 1510);
+            } else if (selectedStyle === 'clean') {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                ctx.fillRect(80, 1500, 920, 200);
+                ctx.fillStyle = '#00e676';
+                ctx.font = 'bold 38px Arial';
+                wrapText(ctx, headline, 110, 1560, 860, 48);
+            }
+        }
+
+        function drawFooter(templateId) {
             const footerY = currentMode === 'card' ? 1270 : 1840;
-            ctx.fillStyle = '#e50914';
+            let footerBg = '#e50914';
+            if(templateId === '4' && currentMode === 'card') footerBg = '#222';
+
+            ctx.fillStyle = footerBg;
             ctx.fillRect(0, footerY, 1080, 80);
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 30px Arial';
             ctx.fillText('𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚', 60, footerY + 50);
 
-            // Logo Overlay
             if(uploadedLogo) {
                 ctx.drawImage(uploadedLogo, 920, footerY + 10, 100, 60);
             }
@@ -375,7 +422,6 @@
             drawCanvasFrame(0, 1.0);
         }
 
-        // Text Wrap Helper
         function wrapText(context, text, x, y, maxWidth, lineHeight) {
             let words = text.split(' ');
             let line = '';
@@ -393,7 +439,6 @@
             context.fillText(line, x, y);
         }
 
-        // Photo Card Download Function
         function downloadPhotoCard() {
             const link = document.createElement('a');
             link.download = 'news-card.png';
@@ -401,7 +446,6 @@
             link.click();
         }
 
-        // Reel Video Preview Function
         function playReelPreview() {
             if(loadedImages.length === 0) {
                 alert('অনুগ্রহ করে অন্তত একটি ছবি সিলেক্ট করুন!');
@@ -426,14 +470,13 @@
                 zoom += 0.0006;
                 drawCanvasFrame(imgIdx, zoom);
 
-                if(step % 120 === 0) { // Change slide every ~4 seconds
+                if(step % 120 === 0) {
                     imgIdx = (imgIdx + 1) % loadedImages.length;
                     zoom = 1.0;
                 }
             }, 33);
         }
 
-        // Reel Video MP4 Export Function
         function exportReelVideo() {
             if(loadedImages.length === 0) {
                 alert('ভিডিও এক্সপোর্ট করতে ছবি আপলোড করা প্রয়োজন!');
@@ -464,10 +507,9 @@
             setTimeout(() => {
                 recorder.stop();
                 clearInterval(animInterval);
-            }, 10000); // Generates 10 second Reel
+            }, 10000);
         }
 
-        // Initial Initialization
         setMode('card');
     </script>
 </body>
