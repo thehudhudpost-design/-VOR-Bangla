@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Of Rising Bangla - অল-ইন-ওয়ান স্টুডিও</title>
+    <title>Voice Of Rising Bangla - ফটো কার্ড জেনারেটর</title>
     <style>
         :root {
             --primary: #e50914;
-            --bg: #121212;
-            --panel-bg: #1e1e1e;
-            --input-bg: #2a2a2a;
-            --text: #ffffff;
-            --accent: #00e676;
+            --bg: #0f172a;
+            --panel-bg: #1e293b;
+            --input-bg: #334155;
+            --text: #f8fafc;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -19,381 +18,258 @@
 
         header { text-align: center; margin-bottom: 20px; padding: 15px; background: var(--panel-bg); border-radius: 10px; border-bottom: 3px solid var(--primary); }
         header h1 { color: var(--primary); font-size: 26px; margin-bottom: 5px; }
-        header p { color: #aaa; font-size: 13px; }
+        header p { color: #94a3b8; font-size: 13px; }
 
-        /* Global Tabs to Switch Between Systems */
-        .global-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { padding: 12px 20px; background: #222; border: 2px solid #444; color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 14px; }
+        /* Style Switcher Tabs */
+        .style-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn {
+            flex: 1; padding: 12px; border: 2px solid #475569; background: #1e293b;
+            color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 14px;
+        }
         .tab-btn.active { background: var(--primary); border-color: var(--primary); }
 
-        .app-container { max-width: 1250px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
-        @media (max-width: 900px) { .app-container { grid-template-columns: 1fr; } }
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
+        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
 
-        .panel { background: var(--panel-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        
-        .mode-switch { display: flex; gap: 10px; margin-bottom: 20px; }
-        .mode-btn {
-            flex: 1; padding: 10px; border: 1px solid var(--primary); background: transparent;
-            color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        .mode-btn.active { background: var(--primary); }
-
+        .panel { background: var(--panel-bg); padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; color: #ccc; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #cbd5e1; font-weight: 600; }
         
         input[type="text"], textarea, select, input[type="color"], input[type="range"] {
-            width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: var(--input-bg); color: #fff; outline: none; font-size: 14px;
+            width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #475569; background: var(--input-bg); color: #fff; outline: none; font-size: 14px;
         }
 
-        .btn-action {
-            width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--primary);
-            color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s;
-        }
-        .btn-action:hover { opacity: 0.9; }
-        .btn-green { background: #28a745; }
-        .btn-blue { background: #17a2b8; }
+        .row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .preview-box { display: flex; flex-direction: column; align-items: center; position: sticky; top: 15px; }
-        canvas { max-width: 100%; height: auto; border: 2px solid #333; border-radius: 10px; background: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.8); }
-        #statusText { margin-top: 12px; font-size: 13px; color: #ffca28; text-align: center; font-weight: bold; }
+        .btn-download {
+            width: 100%; padding: 14px; border: none; border-radius: 8px; background: #22c55e;
+            color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s;
+        }
+        .btn-download:hover { background: #16a34a; }
+
+        .preview-area { display: flex; flex-direction: column; align-items: center; position: sticky; top: 20px; }
+        canvas { max-width: 100%; height: auto; border: 2px solid #334155; border-radius: 12px; background: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
 
     <header>
         <h1>𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚</h1>
-        <p>অল-ইন-ওয়ান নিউজ ফটো কার্ড ও রিল জেনারেটর স্টুডিও</p>
+        <p>প্রফেশনাল নিউজ ফটো কার্ড ও কাস্টম এডিটর</p>
     </header>
 
-    <!-- Global Tabs to Switch Between Versions inside same page -->
-    <div class="global-tabs">
-        <button class="tab-btn active" id="tabSys1" onclick="switchSystem(1)">📌 ১৫ টেমপ্লেট ও রিল ভিডিও মেকার</button>
-        <button class="tab-btn" id="tabSys2" onclick="switchSystem(2)">🎨 কাস্টম ফাহিম/আমিনুল স্টাইল এডিটর</button>
-    </div>
-
-    <div class="app-container">
-        <!-- Control Panel -->
+    <div class="container">
+        <!-- কন্ট্রোল প্যানেল -->
         <div class="panel">
-            <div class="mode-switch" id="modeSwitchBox">
-                <button class="mode-btn active" id="btnCardMode" onclick="setMode('card')">ফটো কার্ড মোড (4:5)</button>
-                <button class="mode-btn" id="btnReelMode" onclick="setMode('reel')">রিল ভিডিও মোড (9:16)</button>
+            <!-- মোড সিলেকশন ট্যাব -->
+            <div class="style-tabs">
+                <button class="tab-btn active" id="btnMode1" onclick="setDesignMode(1)">📌 ১৫ টেমপ্লেট মোড</button>
+                <button class="tab-btn" id="btnMode2" onclick="setDesignMode(2)">🎨 কাস্টম এডিটর</button>
             </div>
 
-            <!-- System 1 Controls -->
-            <div id="sys1Controls">
-                <div class="form-group" id="templateGroup">
-                    <label for="templateSelect">ডিজাইন টেমপ্লেট (১৫টি অপশন):</label>
-                    <select id="templateSelect" onchange="updateCanvas()">
-                        <option value="1">১. ব্রেকিং নিউজ (Breaking News)</option>
-                        <option value="2" selected>২. সাধারণ নিউজ (Standard News)</option>
-                        <option value="3">৩. উক্তি / কোট কার্ড (Quote)</option>
-                        <option value="4">৪. শোক সংবাদ (Condolence)</option>
-                        <option value="5">৫. খেলাধুলা (Sports Special)</option>
-                        <option value="6">৬. জনমত পোল (Opinion Poll)</option>
-                        <option value="7">৭. জরুরি সতর্কতা (Alert/Warning)</option>
-                        <option value="8">৮. অর্থনীতি ও শেয়ারবাজার (Business)</option>
-                        <option value="9">৯. আন্তর্জাতিক সংবাদ (International)</option>
-                        <option value="10">১০. বিনোদন ও গ্ল্যামার (Entertainment)</option>
-                        <option value="11">১১. রাজনীতি (Politics Special)</option>
-                        <option value="12">১২. আবহাওয়া বার্তা (Weather Update)</option>
-                        <option value="13">১৩. শুভেচ্ছা ও জন্মদিন (Greetings)</option>
-                        <option value="14">১৪. ইতিহাসে আজকের দিন (History)</option>
-                        <option value="15">১৫. ফ্যাক্ট চেক (Fact Check)</option>
-                    </select>
-                </div>
+            <!-- টেমপ্লেট ড্রপডাউন (মোড ১) -->
+            <div class="form-group" id="templateGroup">
+                <label for="templateSelect">ডিজাইন টেমপ্লেট:</label>
+                <select id="templateSelect" onchange="drawCard()">
+                    <option value="1">১. ব্রেকিং নিউজ (Breaking News)</option>
+                    <option value="2" selected>২. সাধারণ নিউজ (Standard News)</option>
+                    <option value="3">৩. উক্তি / কোট কার্ড (Quote)</option>
+                    <option value="4">৪. শোক সংবাদ (Condolence)</option>
+                    <option value="5">৫. খেলাধুলা (Sports Special)</option>
+                    <option value="6">৬. জনমত পোল (Opinion Poll)</option>
+                    <option value="7">৭. জরুরি সতর্কতা (Alert/Warning)</option>
+                    <option value="8">৮. অর্থনীতি ও শেয়ারবাজার (Business)</option>
+                    <option value="9">৯. আন্তর্জাতিক সংবাদ (International)</option>
+                    <option value="10">১০. বিনোদন ও গ্ল্যামার (Entertainment)</option>
+                    <option value="11">১১. রাজনীতি (Politics Special)</option>
+                    <option value="12">১২. আবহাওয়া বার্তা (Weather Update)</option>
+                    <option value="13">১৩. শুভেচ্ছা ও জন্মদিন (Greetings)</option>
+                    <option value="14">১৪. ইতিহাসে আজকের দিন (History)</option>
+                    <option value="15">১৫. ফ্যাক্ট চেক (Fact Check)</option>
+                </select>
             </div>
 
-            <!-- System 2 Controls (Custom Style) -->
-            <div id="sys2Controls" style="display: none;">
-                <div class="form-group">
-                    <label for="accentColor">থিম কালার (Accent Color):</label>
-                    <input type="color" id="accentColor" value="#e50914" oninput="updateCanvas()">
-                </div>
-                <div class="form-group">
-                    <label for="fontSizeRange">শিরোনাম ফন্ট সাইজ: <span id="fontSizeVal">44</span>px</label>
-                    <input type="range" id="fontSizeRange" min="30" max="60" value="44" oninput="document.getElementById('fontSizeVal').innerText=this.value; updateCanvas()">
+            <!-- কাস্টম কালার ও ফন্ট কন্ট্রোল (মোড ২) -->
+            <div id="customControls" style="display: none;">
+                <div class="row-group">
+                    <div class="form-group">
+                        <label for="themeColor">থিম কালার:</label>
+                        <input type="color" id="themeColor" value="#e50914" oninput="drawCard()">
+                    </div>
+                    <div class="form-group">
+                        <label for="fontSize">ফন্ট সাইজ: <span id="fontVal">44</span>px</label>
+                        <input type="range" id="fontSize" min="30" max="60" value="44" oninput="document.getElementById('fontVal').innerText=this.value; drawCard()">
+                    </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="category">ক্যাটাগরি / ট্যাগ:</label>
-                <input type="text" id="category" value="জাতীয়" oninput="updateCanvas()">
+                <input type="text" id="category" value="জাতীয়" oninput="drawCard()">
             </div>
 
             <div class="form-group">
-                <label for="headline">সংবাদের শিরোনাম বা মূল টেক্সট:</label>
-                <textarea id="headline" rows="3" oninput="updateCanvas()">এক লিংকের ভেতরেই সমস্ত ফিচার যুক্ত করা হয়েছে!</textarea>
+                <label for="headline">সংবাদের শিরোনাম বা উক্তি:</label>
+                <textarea id="headline" rows="3" oninput="drawCard()">ফাহিম স্টাইল ও ১৫টি টেমপ্লেট নিয়ে আপডেট সম্পন্ন হয়েছে।</textarea>
             </div>
 
-            <div class="form-group" id="subheadGroup">
+            <div class="form-group" id="subheadBox">
                 <label for="subhead">সাব-হেডলাইন / বক্তার নাম:</label>
-                <input type="text" id="subhead" value="আপনার পছন্দমতো মোড সিলেক্ট করুন" oninput="updateCanvas()">
+                <input type="text" id="subhead" value="বিশেষ প্রতিনিধি" oninput="drawCard()">
+            </div>
+
+            <!-- ইমেজ জুম কন্ট্রোল -->
+            <div class="form-group">
+                <label for="imgZoom">ছবির সাইজ/জুম: <span id="zoomVal">1.0</span>x</label>
+                <input type="range" id="imgZoom" min="0.5" max="2.0" step="0.1" value="1.0" oninput="document.getElementById('zoomVal').innerText=this.value; drawCard()">
             </div>
 
             <div class="form-group">
-                <label for="bgImage">মিডিয়া আপলোড (ছবি বা একাধিক ফাইল):</label>
-                <input type="file" id="bgImage" accept="image/*,video/*" multiple>
+                <label for="bgImage">সংবাদের মূল ছবি আপলোড করুন:</label>
+                <input type="file" id="bgImage" accept="image/*">
             </div>
 
             <div class="form-group">
-                <label for="logoImage">লোগো আপলোড:</label>
+                <label for="logoImage">লোগো আপলোড (PNG):</label>
                 <input type="file" id="logoImage" accept="image/*">
             </div>
 
-            <div class="form-group" id="audioGroup" style="display:none;">
-                <label for="bgAudio">ব্যাকগ্রাউন্ড মিউজিক (ঐচ্ছিক):</label>
-                <input type="file" id="bgAudio" accept="audio/*">
-            </div>
-
-            <!-- Action Buttons -->
-            <div id="cardActions">
-                <button class="btn-action btn-green" onclick="downloadPhotoCard()">ফটো কার্ড ডাউনলোড (PNG)</button>
-            </div>
-
-            <div id="reelActions" style="display: none;">
-                <button class="btn-action btn-blue" onclick="playReelPreview()">▶️ রিল প্রিভিউ প্লে করুন</button>
-                <button class="btn-action btn-green" onclick="exportReelVideo()">🎬 ভিডিও এক্সপোর্ট (MP4)</button>
-                <button class="btn-action" style="background:#555;" onclick="stopReelPreview()">⏹️ প্রিভিউ বন্ধ করুন</button>
-            </div>
+            <button class="btn-download" onclick="downloadCard()">ফটো কার্ড ডাউনলোড (PNG)</button>
         </div>
 
-        <!-- Preview Area -->
-        <div class="panel preview-box">
-            <div class="section-title" id="previewTitle" style="color:var(--primary); font-weight:bold; margin-bottom:10px;">ফটো কার্ড প্রিভিউ (4:5)</div>
-            <canvas id="mainCanvas" width="1080" height="1350"></canvas>
-            <p id="statusText">ছবি আপলোড করে প্রিভিউ বা ডাউনলোড করুন।</p>
-            <audio id="audioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
+        <!-- প্রিভিউ এরিয়া -->
+        <div class="panel preview-area">
+            <h2 id="previewTitle" style="font-size: 16px; margin-bottom: 15px; color: #38bdf8;">কার্ড প্রিভিউ (4:5 Ratio)</h2>
+            <canvas id="cardCanvas" width="1080" height="1350"></canvas>
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('mainCanvas');
+        const canvas = document.getElementById('cardCanvas');
         const ctx = canvas.getContext('2d');
-        let currentSystem = 1;
-        let currentMode = 'card';
-        let loadedImages = [];
-        let uploadedLogo = null;
-        let animInterval = null;
+        
+        let loadedImg = null;
+        let loadedLogo = null;
+        let activeDesignMode = 1;
 
-        function switchSystem(sys) {
-            currentSystem = sys;
-            document.getElementById('tabSys1').classList.toggle('active', sys === 1);
-            document.getElementById('tabSys2').classList.toggle('active', sys === 2);
-            document.getElementById('sys1Controls').style.display = sys === 1 ? 'block' : 'none';
-            document.getElementById('sys2Controls').style.display = sys === 2 ? 'block' : 'none';
-            
-            // System 2 supports photo card only cleanly
-            if(sys === 2) {
-                setMode('card');
-                document.getElementById('modeSwitchBox').style.display = 'none';
-            } else {
-                document.getElementById('modeSwitchBox').style.display = 'flex';
-            }
-            updateCanvas();
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
-            document.getElementById('btnCardMode').classList.toggle('active', mode === 'card');
-            document.getElementById('btnReelMode').classList.toggle('active', mode === 'reel');
-            
-            document.getElementById('cardActions').style.display = mode === 'card' ? 'block' : 'none';
-            document.getElementById('reelActions').style.display = mode === 'reel' ? 'block' : 'none';
-            document.getElementById('subheadGroup').style.display = mode === 'card' ? 'block' : 'none';
-            document.getElementById('audioGroup').style.display = mode === 'reel' ? 'block' : 'none';
-
-            if(mode === 'card') {
-                canvas.width = 1080;
-                canvas.height = 1350;
-                document.getElementById('previewTitle').innerText = 'ফটো কার্ড প্রিভিউ (4:5)';
-            } else {
-                canvas.width = 1080;
-                canvas.height = 1920;
-                document.getElementById('previewTitle').innerText = 'রিল ভিডিও প্রিভিউ (9:16)';
-            }
-            clearInterval(animInterval);
-            updateCanvas();
+        function setDesignMode(mode) {
+            activeDesignMode = mode;
+            document.getElementById('btnMode1').classList.toggle('active', mode === 1);
+            document.getElementById('btnMode2').classList.toggle('active', mode === 2);
+            document.getElementById('templateGroup').style.display = mode === 1 ? 'block' : 'none';
+            document.getElementById('customControls').style.display = mode === 2 ? 'block' : 'none';
+            drawCard();
         }
 
         document.getElementById('bgImage').addEventListener('change', function(e) {
-            loadedImages = [];
-            const files = Array.from(e.target.files);
-            let count = 0;
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        count++;
-                        if(count === files.length) updateCanvas();
-                    };
-                    img.src = event.target.result;
-                    loadedImages.push(img);
-                };
-                reader.readAsDataURL(file);
-            });
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                loadedImg = new Image();
+                loadedImg.onload = drawCard;
+                loadedImg.src = event.target.result;
+            }
+            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
         });
 
         document.getElementById('logoImage').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
-                uploadedLogo = new Image();
-                uploadedLogo.onload = updateCanvas;
-                uploadedLogo.src = event.target.result;
+                loadedLogo = new Image();
+                loadedLogo.onload = drawCard;
+                loadedLogo.src = event.target.result;
             }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
         });
 
-        function drawCanvasFrame(imgIdx = 0, zoom = 1.0) {
+        function drawCard() {
+            const category = document.getElementById('category').value;
+            const headline = document.getElementById('headline').value;
+            const subhead = document.getElementById('subhead').value;
             const templateId = document.getElementById('templateSelect').value;
-            const imgHeight = currentMode === 'card' ? 800 : 1200;
+            const themeColor = document.getElementById('themeColor').value;
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const zoom = parseFloat(document.getElementById('imgZoom').value);
 
-            ctx.fillStyle = '#111';
+            ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            if (loadedImages.length > 0 && loadedImages[imgIdx]) {
+            if (loadedImg) {
                 ctx.save();
-                if(zoom > 1.0) {
-                    ctx.translate(canvas.width / 2, imgHeight / 2);
-                    ctx.scale(zoom, zoom);
-                    ctx.drawImage(loadedImages[imgIdx], -canvas.width / 2, -imgHeight / 2, canvas.width, imgHeight);
-                } else {
-                    ctx.drawImage(loadedImages[imgIdx], 0, 0, canvas.width, imgHeight);
-                }
+                ctx.translate(1080 / 2, 800 / 2);
+                ctx.scale(zoom, zoom);
+                ctx.drawImage(loadedImg, -1080 / 2, -800 / 2, 1080, 800);
                 ctx.restore();
             } else {
-                ctx.fillStyle = '#222';
-                ctx.fillRect(0, 0, canvas.width, imgHeight);
-                ctx.fillStyle = '#666';
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, 1080, 800);
+                ctx.fillStyle = '#64748b';
                 ctx.font = '36px Arial';
-                ctx.fillText('ছবি বা ভিডিও আপলোড করুন', canvas.width / 2 - 160, imgHeight / 2);
+                ctx.fillText('ছবি নির্বাচন করুন', 420, 400);
             }
 
-            if(currentSystem === 1) {
-                if(currentMode === 'card') {
-                    applyTemplateOverlay(templateId, imgHeight);
-                } else {
-                    applyReelOverlay();
-                }
+            let grad = ctx.createLinearGradient(0, 550, 0, 1350);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.35, 'rgba(0,0,0,0.9)');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 550, 1080, 800);
+
+            let accent = '#e50914';
+            let fSizeToUse = 44;
+
+            if (activeDesignMode === 1) {
+                if(templateId === '3') accent = '#ff9800';
+                else if(templateId === '5') accent = '#00c853';
+                else if(templateId === '7') accent = '#ffd600';
+                else if(templateId === '8') accent = '#00e676';
+                else if(templateId === '9') accent = '#29b6f6';
+                else if(templateId === '10') accent = '#e91e63';
+                fSizeToUse = 44;
             } else {
-                applyCustomSystemOverlay(imgHeight);
+                accent = themeColor;
+                fSizeToUse = fontSize;
             }
 
-            drawFooter();
-        }
-
-        function applyTemplateOverlay(templateId, imgHeight) {
-            const headline = document.getElementById('headline').value;
-            const subhead = document.getElementById('subhead').value;
-            const category = document.getElementById('category').value;
-            const headY = 880;
-
-            let grad = ctx.createLinearGradient(0, imgHeight - 250, 0, canvas.height);
-            grad.addColorStop(0, 'rgba(0,0,0,0)');
-            grad.addColorStop(0.3, 'rgba(0,0,0,0.85)');
-            grad.addColorStop(1, '#000000');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, imgHeight - 250, canvas.width, canvas.height - (imgHeight - 250));
-
-            if(category) {
-                ctx.fillStyle = '#e50914';
-                ctx.fillRect(60, 780, 220, 48);
-                ctx.fillStyle = '#fff';
+            if (category) {
+                ctx.fillStyle = accent;
+                ctx.fillRect(60, 770, 220, 50);
+                ctx.fillStyle = (activeDesignMode === 1 && templateId === '7') ? '#000' : '#ffffff';
                 ctx.font = 'bold 26px Arial';
-                ctx.fillText(category, 80, 814);
+                ctx.fillText(category, 80, 805);
+            }
+
+            if (activeDesignMode === 1 && templateId === '3') {
+                ctx.fillStyle = 'rgba(255, 152, 0, 0.4)';
+                ctx.font = 'bold 150px Georgia';
+                ctx.fillText('“', 45, 870);
             }
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 44px Arial';
-            wrapText(ctx, headline, 60, headY, 960, 58);
+            ctx.font = `bold ${fSizeToUse}px Arial`;
+            wrapText(ctx, headline, 60, 880, 960, fSizeToUse + 16);
 
-            if(subhead) {
-                ctx.fillStyle = '#d1d1d1';
+            if (subhead) {
+                ctx.fillStyle = (activeDesignMode === 1 && templateId === '3') ? '#ffcc80' : '#cbd5e1';
                 ctx.font = '28px Arial';
-                wrapText(ctx, subhead, 60, 1110, 960, 40);
-            }
-        }
-
-        function applyReelOverlay() {
-            const headline = document.getElementById('headline').value;
-            const category = document.getElementById('category').value;
-
-            let grad = ctx.createLinearGradient(0, 1000, 0, 1920);
-            grad.addColorStop(0, 'rgba(0,0,0,0)');
-            grad.addColorStop(0.4, 'rgba(0,0,0,0.95)');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 1000, 1080, 920);
-
-            ctx.fillStyle = '#00e676';
-            ctx.fillRect(60, 1380, 240, 55);
-            ctx.fillStyle = '#000';
-            ctx.font = 'bold 30px Arial';
-            ctx.fillText(category || 'ব্রেকিং নিউজ', 80, 1418);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 48px Arial';
-            wrapText(ctx, headline, 60, 1490, 960, 60);
-        }
-
-        function applyCustomSystemOverlay(imgHeight) {
-            const headline = document.getElementById('headline').value;
-            const subhead = document.getElementById('subhead').value;
-            const category = document.getElementById('category').value;
-            const customColor = document.getElementById('accentColor').value;
-            const fSize = parseInt(document.getElementById('fontSizeRange').value);
-            const headY = 880;
-
-            let grad = ctx.createLinearGradient(0, imgHeight - 250, 0, canvas.height);
-            grad.addColorStop(0, 'rgba(0,0,0,0)');
-            grad.addColorStop(0.3, 'rgba(0,0,0,0.85)');
-            grad.addColorStop(1, '#000000');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, imgHeight - 250, canvas.width, canvas.height - (imgHeight - 250));
-
-            if(category) {
-                ctx.fillStyle = customColor;
-                ctx.fillRect(60, 780, 220, 48);
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 26px Arial';
-                ctx.fillText(category, 80, 814);
+                wrapText(ctx, subhead, 60, 1120, 960, 40);
             }
 
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `bold ${fSize}px Arial`;
-            wrapText(ctx, headline, 60, headY, 960, fSize + 14);
-
-            if(subhead) {
-                ctx.fillStyle = '#d1d1d1';
-                ctx.font = '28px Arial';
-                wrapText(ctx, subhead, 60, 1110, 960, 40);
-            }
-        }
-
-        function drawFooter() {
-            const footerY = currentMode === 'card' ? 1270 : 1840;
-            const customColor = currentSystem === 2 ? document.getElementById('accentColor').value : '#e50914';
-
-            ctx.fillStyle = customColor;
-            ctx.fillRect(0, footerY, 1080, 80);
+            ctx.fillStyle = accent;
+            ctx.fillRect(0, 1270, 1080, 80);
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 30px Arial';
-            ctx.fillText('𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚', 60, footerY + 50);
+            ctx.fillText('𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚', 60, 1320);
 
-            if(uploadedLogo) {
-                ctx.drawImage(uploadedLogo, 920, footerY + 10, 100, 60);
+            if (loadedLogo) {
+                ctx.drawImage(loadedLogo, 920, 1280, 100, 60);
             }
-        }
-
-        function updateCanvas() {
-            clearInterval(animInterval);
-            drawCanvasFrame(0, 1.0);
         }
 
         function wrapText(context, text, x, y, maxWidth, lineHeight) {
             let words = text.split(' ');
             let line = '';
-            for(let n = 0; n < words.length; n++) {
+            for (let n = 0; n < words.length; n++) {
                 let testLine = line + words[n] + ' ';
                 let metrics = context.measureText(testLine);
                 if (metrics.width > maxWidth && n > 0) {
@@ -407,86 +283,14 @@
             context.fillText(line, x, y);
         }
 
-        function downloadPhotoCard() {
+        function downloadCard() {
             const link = document.createElement('a');
             link.download = 'news-card.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
 
-        function playReelPreview() {
-            if(loadedImages.length === 0) {
-                alert('অনুগ্রহ করে অন্তত একটি ছবি সিলেক্ট করুন!');
-                return;
-            }
-            clearInterval(animInterval);
-
-            let step = 0;
-            let imgIdx = 0;
-            let zoom = 1.0;
-
-            const audioInput = document.getElementById('bgAudio');
-            const audioPlayer = document.getElementById('audioPlayer');
-            if(audioInput.files[0]) {
-                audioPlayer.src = URL.createObjectURL(audioInput.files[0]);
-                audioPlayer.style.display = 'block';
-                audioPlayer.play();
-            }
-
-            document.getElementById('statusText').innerText = "রিল প্রিভিউ চলছে...";
-
-            animInterval = setInterval(() => {
-                step++;
-                zoom += 0.0006;
-                drawCanvasFrame(imgIdx, zoom);
-
-                if(step % 120 === 0) {
-                    imgIdx = (imgIdx + 1) % loadedImages.length;
-                    zoom = 1.0;
-                }
-            }, 33);
-        }
-
-        function exportReelVideo() {
-            if(loadedImages.length === 0) {
-                alert('ভিডিও এক্সপোর্ট করতে ছবি আপলোড করা প্রয়োজন!');
-                return;
-            }
-
-            const status = document.getElementById('statusText');
-            status.innerText = "ভিডিও রেন্ডার হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।";
-
-            const stream = canvas.captureStream(30);
-            const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-            const chunks = [];
-
-            recorder.ondataavailable = e => chunks.push(e.data);
-            recorder.onstop = () => {
-                const blob = new Blob(chunks, { type: 'video/mp4' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'news-reel.mp4';
-                a.click();
-                status.innerText = "ভিডিও সফলভাবে এক্সপোর্ট ও ডাউনলোড হয়েছে!";
-            };
-
-            recorder.start();
-            playReelPreview();
-
-            setTimeout(() => {
-                recorder.stop();
-                clearInterval(animInterval);
-            }, 10000);
-        }
-
-        function stopReelPreview() {
-            clearInterval(animInterval);
-            updateCanvas();
-            document.getElementById('statusText').innerText = "প্রিভিউ বন্ধ করা হয়েছে।";
-        }
-
-        setMode('card');
+        drawCard();
     </script>
 </body>
 </html>
