@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Of Rising Bangla - ফটো কার্ড ও রিল জেনারেটর</title>
+    <title>Voice Of Rising Bangla - প্রফেশনাল নিউজ ও ফটো কার্ড জেনারেটর</title>
     <style>
         :root {
             --primary: #e50914;
@@ -33,20 +33,14 @@
         }
         .mode-btn.active { background: var(--primary); }
 
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; color: #ccc; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
         
-        input[type="text"], textarea, select {
+        input[type="text"], textarea, select, input[type="color"], input[type="range"] {
             width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background: var(--input-bg); color: #fff; outline: none; font-size: 14px;
         }
 
-        /* Video Styles Selector */
-        .style-grid { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; }
-        .style-card {
-            min-width: 95px; height: 50px; background: #2a2a2a; border: 2px solid #444; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; padding: 5px;
-        }
-        .style-card.active { border-color: var(--accent); background: #1c3d27; }
+        .row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         .btn-action {
             width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--primary);
@@ -65,7 +59,7 @@
 
     <header>
         <h1>𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚</h1>
-        <p>ফটো কার্ড (১৫টি টেমপ্লেট) ও ভিডিও রিল জেনারেটর</p>
+        <p>ফটো কার্ড ও ভিডিও রিল জেনারেটর (অ্যাডভান্সড কাস্টমাইজেশন)</p>
     </header>
 
     <div class="app-container">
@@ -76,7 +70,7 @@
                 <button class="mode-btn" id="btnReelMode" onclick="setMode('reel')">রিল ভিডিও মোড (9:16)</button>
             </div>
 
-            <!-- Template Selector (Photo Card Mode) -->
+            <!-- Template Selector -->
             <div class="form-group" id="templateGroup">
                 <label for="templateSelect">ডিজাইন টেমপ্লেট (১৫টি অপশন):</label>
                 <select id="templateSelect" onchange="updateCanvas()">
@@ -98,45 +92,46 @@
                 </select>
             </div>
 
-            <!-- Video Styles Selector (Reel Mode) -->
-            <div class="form-group" id="videoStyleGroup" style="display:none;">
-                <label>ভিডিও লেআউট স্টাইল:</label>
-                <div class="style-grid">
-                    <div class="style-card active" onclick="setStyle('card')" id="st-card">নিউজ কার্ড</div>
-                    <div class="style-card" onclick="setStyle('tv')" id="st-tv">টিভি নিউজ</div>
-                    <div class="style-card" onclick="setStyle('clean')" id="st-clean">ক্লিন ক্যাপশন</div>
-                </div>
-            </div>
-
             <div class="form-group">
                 <label for="category">ক্যাটাগরি / ট্যাগ:</label>
                 <input type="text" id="category" value="জাতীয়" oninput="updateCanvas()">
             </div>
 
             <div class="form-group">
-                <label for="headline">সংবাদের শিরোনাম:</label>
-                <textarea id="headline" rows="3" oninput="updateCanvas()">ভিডিও রিল ও ফটো কার্ড জেনারেটর সিস্টেম আপডেট করা হয়েছে!</textarea>
+                <label for="headline">সংবাদের শিরোনাম বা মূল টেক্সট:</label>
+                <textarea id="headline" rows="3" oninput="updateCanvas()">অ্যাডভান্সড কাস্টমাইজেশন টুলসহ নতুন জেনারেটর চালু হয়েছে!</textarea>
             </div>
 
             <div class="form-group" id="subheadGroup">
-                <label for="subhead">সাব-হেডলাইন / স্পিকার:</label>
-                <input type="text" id="subhead" value="সহজেই রিল ভিডিও তৈরি করুন" oninput="updateCanvas()">
+                <label for="subhead">সাব-হেডলাইন / বক্তার নাম:</label>
+                <input type="text" id="subhead" value="সহজেই সাইট থেকে কাস্টমাইজ করে ডাউনলোড করুন" oninput="updateCanvas()">
             </div>
 
-            <!-- Background Audio for Reel -->
-            <div class="form-group" id="audioGroup" style="display:none;">
-                <label for="bgAudio">ব্যাকগ্রাউন্ড মিউজিক (ঐচ্ছিক):</label>
-                <input type="file" id="bgAudio" accept="audio/*">
+            <!-- Fahim / Aminul Style Custom Controls -->
+            <div class="row-group">
+                <div class="form-group">
+                    <label for="accentColor">থিম কালার (Accent):</label>
+                    <input type="color" id="accentColor" value="#e50914" oninput="updateCanvas()">
+                </div>
+                <div class="form-group">
+                    <label for="fontSizeRange">শিরোনাম সাইজ: <span id="fontSizeVal">44</span>px</label>
+                    <input type="range" id="fontSizeRange" min="30" max="60" value="44" oninput="document.getElementById('fontSizeVal').innerText=this.value; updateCanvas()">
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="bgImage">ছবি আপলোড (একাধিক ছবি সিলেক্ট করা যাবে):</label>
+                <label for="bgImage">ছবি আপলোড (একাধিক সিলেক্ট করা যাবে রিলের জন্য):</label>
                 <input type="file" id="bgImage" accept="image/*" multiple>
             </div>
 
             <div class="form-group">
                 <label for="logoImage">লোগো আপলোড:</label>
                 <input type="file" id="logoImage" accept="image/*">
+            </div>
+
+            <div class="form-group" id="audioGroup" style="display:none;">
+                <label for="bgAudio">ব্যাকগ্রাউন্ড মিউজিক (ঐচ্ছিক):</label>
+                <input type="file" id="bgAudio" accept="audio/*">
             </div>
 
             <!-- Action Buttons -->
@@ -153,7 +148,7 @@
 
         <!-- Preview Area -->
         <div class="panel preview-box">
-            <div class="section-title" id="previewTitle">ফটো কার্ড প্রিভিউ (4:5)</div>
+            <div class="section-title" id="previewTitle" style="color:var(--primary); font-weight:bold; margin-bottom:10px;">ফটো কার্ড প্রিভিউ (4:5)</div>
             <canvas id="mainCanvas" width="1080" height="1350"></canvas>
             <p id="statusText">ছবি আপলোড করে প্রিভিউ বা ডাউনলোড করুন।</p>
             <audio id="audioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
@@ -164,7 +159,6 @@
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
         let currentMode = 'card';
-        let selectedStyle = 'card';
         let loadedImages = [];
         let uploadedLogo = null;
         let animInterval = null;
@@ -178,7 +172,6 @@
             document.getElementById('reelActions').style.display = mode === 'reel' ? 'block' : 'none';
             document.getElementById('subheadGroup').style.display = mode === 'card' ? 'block' : 'none';
             document.getElementById('templateGroup').style.display = mode === 'card' ? 'block' : 'none';
-            document.getElementById('videoStyleGroup').style.display = mode === 'reel' ? 'block' : 'none';
             document.getElementById('audioGroup').style.display = mode === 'reel' ? 'block' : 'none';
 
             if(mode === 'card') {
@@ -191,13 +184,6 @@
                 document.getElementById('previewTitle').innerText = 'রিল ভিডিও প্রিভিউ (9:16)';
             }
             clearInterval(animInterval);
-            updateCanvas();
-        }
-
-        function setStyle(style) {
-            selectedStyle = style;
-            document.querySelectorAll('.style-card').forEach(el => el.classList.remove('active'));
-            document.getElementById(`st-${style}`).classList.add('active');
             updateCanvas();
         }
 
@@ -268,19 +254,9 @@
             const headline = document.getElementById('headline').value;
             const subhead = document.getElementById('subhead').value;
             const category = document.getElementById('category').value;
+            const customColor = document.getElementById('accentColor').value;
+            const fSize = parseInt(document.getElementById('fontSizeRange').value);
             const headY = 880;
-
-            let mainColor = '#e50914';
-            if(templateId === '1') mainColor = '#ff0000';
-            else if(templateId === '3') mainColor = '#ff9800';
-            else if(templateId === '4') mainColor = '#444444';
-            else if(templateId === '5') mainColor = '#00c853';
-            else if(templateId === '7') mainColor = '#ffd600';
-            else if(templateId === '8') mainColor = '#00e676';
-            else if(templateId === '9') mainColor = '#29b6f6';
-            else if(templateId === '10') mainColor = '#e91e63';
-            else if(templateId === '13') mainColor = '#ffb300';
-            else if(templateId === '15') mainColor = '#d50000';
 
             let grad = ctx.createLinearGradient(0, imgHeight - 250, 0, canvas.height);
             grad.addColorStop(0, 'rgba(0,0,0,0)');
@@ -290,18 +266,18 @@
             ctx.fillRect(0, imgHeight - 250, canvas.width, canvas.height - (imgHeight - 250));
 
             if(category) {
-                ctx.fillStyle = mainColor;
+                ctx.fillStyle = customColor;
                 ctx.fillRect(60, 780, 220, 48);
-                ctx.fillStyle = (templateId === '7' || templateId === '13') ? '#000' : '#fff';
+                ctx.fillStyle = '#fff';
                 ctx.font = 'bold 26px Arial';
                 ctx.fillText(category, 80, 814);
             }
 
             if(templateId === '15') {
                 ctx.save();
-                ctx.strokeStyle = '#ff1744'; ctx.lineWidth = 6;
+                ctx.strokeStyle = customColor; ctx.lineWidth = 6;
                 ctx.strokeRect(750, 700, 260, 90);
-                ctx.fillStyle = '#ff1744'; ctx.font = 'bold 36px Arial';
+                ctx.fillStyle = customColor; ctx.font = 'bold 36px Arial';
                 ctx.fillText('সত্যতা যাচাই', 770, 758);
                 ctx.restore();
             }
@@ -313,11 +289,11 @@
             }
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 44px Arial';
-            wrapText(ctx, headline, 60, headY, 960, 58);
+            ctx.font = `bold ${fSize}px Arial`;
+            wrapText(ctx, headline, 60, headY, 960, fSize + 14);
 
             if(subhead) {
-                ctx.fillStyle = (templateId === '3') ? '#ffcc80' : '#d1d1d1';
+                ctx.fillStyle = '#d1d1d1';
                 ctx.font = '28px Arial';
                 wrapText(ctx, subhead, 60, 1110, 960, 40);
             }
@@ -326,43 +302,30 @@
         function applyReelOverlay() {
             const headline = document.getElementById('headline').value;
             const category = document.getElementById('category').value;
+            const customColor = document.getElementById('accentColor').value;
+            const fSize = parseInt(document.getElementById('fontSizeRange').value);
 
-            if (selectedStyle === 'card') {
-                let grad = ctx.createLinearGradient(0, 1000, 0, 1920);
-                grad.addColorStop(0, 'rgba(0,0,0,0)');
-                grad.addColorStop(0.4, 'rgba(0,0,0,0.95)');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 1000, 1080, 920);
+            let grad = ctx.createLinearGradient(0, 1000, 0, 1920);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.4, 'rgba(0,0,0,0.95)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 1000, 1080, 920);
 
-                ctx.fillStyle = '#00e676';
-                ctx.fillRect(60, 1380, 240, 55);
-                ctx.fillStyle = '#000';
-                ctx.font = 'bold 30px Arial';
-                ctx.fillText(category || 'ব্রেকিং নিউজ', 80, 1418);
+            ctx.fillStyle = customColor;
+            ctx.fillRect(60, 1380, 240, 55);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 30px Arial';
+            ctx.fillText(category || 'ব্রেকিং নিউজ', 80, 1418);
 
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 48px Arial';
-                wrapText(ctx, headline, 60, 1490, 960, 60);
-
-            } else if (selectedStyle === 'tv') {
-                ctx.fillStyle = '#e50914';
-                ctx.fillRect(0, 1450, 1080, 90);
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 42px Arial';
-                ctx.fillText(headline, 50, 1510);
-            } else if (selectedStyle === 'clean') {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                ctx.fillRect(80, 1500, 920, 200);
-                ctx.fillStyle = '#00e676';
-                ctx.font = 'bold 38px Arial';
-                wrapText(ctx, headline, 110, 1560, 860, 48);
-            }
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${fSize + 4}px Arial`;
+            wrapText(ctx, headline, 60, 1490, 960, fSize + 16);
         }
 
         function drawFooter(templateId) {
             const footerY = currentMode === 'card' ? 1270 : 1840;
-            let footerBg = '#e50914';
-            if(templateId === '4' && currentMode === 'card') footerBg = '#222';
+            const customColor = document.getElementById('accentColor').value;
+            let footerBg = (templateId === '4' && currentMode === 'card') ? '#222' : customColor;
 
             ctx.fillStyle = footerBg;
             ctx.fillRect(0, footerY, 1080, 80);
@@ -468,7 +431,7 @@
             setTimeout(() => {
                 recorder.stop();
                 clearInterval(animInterval);
-            }, 10000); // 10 second reel export
+            }, 10000);
         }
 
         function stopReelPreview() {
@@ -480,4 +443,4 @@
         setMode('card');
     </script>
 </body>
-</html>
+    </html>
