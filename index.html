@@ -1,291 +1,224 @@
 <!DOCTYPE html>
-<html lang="bn" class="h-full">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Photo Card Generator</title>
+    <title>প্রফেশনাল নিউজ ফটো কার্ড জেনারেটর</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Alpine.js for reactive state management -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- html2canvas for downloading card as PNG -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Google Fonts: Hind Siliguri for authentic Bengali typography -->
+    <!-- Google Font: Hind Siliguri -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { bengali: ['Hind Siliguri', 'sans-serif'] },
-                }
-            }
-        }
-    </script>
+    <!-- html2canvas for image download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        [x-cloak] { display: none !important; }
-        body { font-family: 'Hind Siliguri', sans-serif; }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-full flex flex-col antialiased" x-data="cardApp()">
+<body class="bg-slate-100 min-y-screen pb-12">
 
-    <!-- Toast Notification -->
-    <div class="fixed top-5 right-5 z-50 transition-all duration-300 transform" x-show="toast.show" x-transition x-cloak>
-        <div class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-white font-medium bg-emerald-600">
-            <i class="fas fa-check-circle"></i>
-            <span x-text="toast.message"></span>
+    <div class="max-w-md mx-auto p-4">
+        <header class="text-center my-4">
+            <h1 class="text-xl font-bold text-slate-800">নিউজ ফটো কার্ড মেকার</h1>
+            <p class="text-xs text-slate-500">আপনার পছন্দমতো নিউজ কার্ড তৈরি করুন ও ডাউনলোড করুন</p>
+        </header>
+
+        <!-- PREVIEW CARD SECTION -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6 border border-slate-200">
+            <div id="photoCard" class="w-full bg-[#0b2721] text-white flex flex-col relative overflow-hidden transition-all duration-300">
+                
+                <!-- Facebook Header -->
+                <div class="bg-white text-slate-900 px-4 py-3 flex items-center justify-between border-b border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <img id="previewLogo" src="https://via.placeholder.com/40" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-slate-300">
+                        <div>
+                            <h3 id="displayPageName" class="font-bold text-sm leading-tight text-slate-900">ICAB Media Wing</h3>
+                            <div class="flex items-center space-x-1 text-[11px] text-slate-500">
+                                <span id="displayDate">৩১ অক্টোবর</span>
+                                <span>•</span>
+                                <!-- Globe Icon -->
+                                <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main News Image Container -->
+                <div class="relative w-full aspect-[4/3] bg-slate-900 overflow-hidden">
+                    <img id="previewImage" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80" alt="News Image" class="w-full h-full object-cover">
+                    
+                    <!-- Top-Right Watermark / Small Logo -->
+                    <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md p-1.5 rounded-full border border-white/20">
+                        <img id="previewWatermark" src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full object-cover">
+                    </div>
+                </div>
+
+                <!-- Content Panel -->
+                <div id="cardThemeBg" class="p-5 flex flex-col justify-between flex-grow bg-gradient-to-b from-[#0b2721] to-[#061814]">
+                    
+                    <!-- Headline -->
+                    <h2 id="displayHeadline" class="text-lg sm:text-xl font-bold leading-snug text-white mb-4 text-center">
+                        ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা
+                    </h2>
+
+                    <!-- Optional Name & Designation Box (Hidden if empty) -->
+                    <div id="authorBox" class="text-center pt-3 border-t border-white/15">
+                        <h4 id="displayName" class="text-amber-400 font-bold text-base leading-tight">মুফতি সৈয়দ ফয়জুল করীম</h4>
+                        <p id="displayDesig" class="text-slate-300 text-xs mt-0.5">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- CONTROLS & INPUTS FORM -->
+        <div class="bg-white rounded-2xl shadow-sm p-4 space-y-4 border border-slate-200">
+            <h2 class="font-semibold text-slate-700 text-sm border-b pb-2">তথ্য ও কাস্টমাইজেশন</h2>
+
+            <!-- Theme Selector -->
+            <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">কার্ড থিম কালার</label>
+                <select id="themeSelector" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <option value="#0b2721">ডার্ক গ্রিন (সবুজ)</option>
+                    <option value="#1e293b">নেভি ব্লু (নীল)</option>
+                    <option value="#581c87">ডিপ পার্পল</option>
+                    <option value="#7f1d1d">মেরুন রেড (লাল)</option>
+                </select>
+            </div>
+
+            <!-- Page Name & Date -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">পেজের নাম</label>
+                    <input type="text" id="inputPageName" value="ICAB Media Wing" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">তারিখ</label>
+                    <input type="text" id="inputDate" value="৩১ অক্টোবর" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                </div>
+            </div>
+
+            <!-- Logo & Image Uploads -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">লোগো আপলোড</label>
+                    <input type="file" id="inputLogo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">প্রধান ছবি আপলোড</label>
+                    <input type="file" id="inputImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+            </div>
+
+            <!-- Headline Input -->
+            <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">মূল শিরোনাম</label>
+                <textarea id="inputHeadline" rows="2" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</textarea>
+            </div>
+
+            <!-- Optional Name & Designation -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">নাম (ঐচ্ছিক)</label>
+                    <input type="text" id="inputName" value="মুফতি সৈয়দ ফয়জুল করীম" placeholder="খালি রাখা যাবে" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">পদবী (ঐচ্ছিক)</label>
+                    <input type="text" id="inputDesig" value="সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ" placeholder="খালি রাখা যাবে" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                </div>
+            </div>
+
+            <!-- Download Button -->
+            <button id="downloadBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span>হাই-কোয়ালিটি ছবি ডাউনলোড করুন</span>
+            </button>
         </div>
     </div>
 
-    <!-- Header Navbar -->
-    <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-40 shadow-sm flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-700 to-teal-600 flex items-center justify-center text-white shadow-md">
-                <i class="fas fa-newspaper text-sm"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-slate-900 text-base leading-tight">নিউজ ফটো কার্ড জেনারেটর</h1>
-                <p class="text-[11px] text-slate-500 font-medium">Professional News Social Card Builder</p>
-            </div>
-        </div>
-        <button @click="downloadCard()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl shadow-md text-xs flex items-center gap-2 transition active:scale-95">
-            <i class="fas fa-download"></i> Download PNG
-        </button>
-    </header>
-
-    <!-- Main Workspace -->
-    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        <!-- PREVIEW SECTION (Sticky or Top on mobile) -->
-        <div class="lg:col-span-6 flex flex-col items-center justify-center lg:sticky lg:top-20">
-            <div class="w-full max-w-[480px]">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Preview (1:1 Square)</span>
-                    <span class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">HD Ready</span>
-                </div>
-
-                <!-- THE ACTUAL CARD TO EXPORT -->
-                <div id="captureCard" class="w-full aspect-square relative overflow-hidden shadow-2xl flex flex-col font-bengali select-none rounded-2xl lg:rounded-3xl border border-slate-200" :style="currentTheme.bgGradient">
-                    
-                    <!-- Top News Photo Area (approx 55% height) -->
-                    <div class="w-full h-[58%] relative overflow-hidden bg-slate-900">
-                        <img :src="photoUrl" alt="News Image" class="w-full h-full object-cover">
-                        <!-- Gradient overlay for smooth blend -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
-                        
-                        <!-- Top-Right Logo / Watermark -->
-                        <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-md p-1 rounded-full shadow-lg border border-white/20 flex items-center justify-center w-12 h-12 overflow-hidden">
-                            <img :src="logoUrl" alt="Logo" class="w-full h-full object-cover rounded-full">
-                        </div>
-                    </div>
-
-                    <!-- Bottom Content Panel -->
-                    <div class="w-full h-[42%] px-6 py-4 flex flex-col justify-between relative" :style="currentTheme.panelBg">
-                        <!-- Decorative Top Glow Line -->
-                        <div class="absolute top-0 left-0 right-0 h-1" :style="currentTheme.accentBar"></div>
-
-                        <!-- Headline Area -->
-                        <div>
-                            <h2 class="text-white font-bold text-lg sm:text-xl leading-snug tracking-tight line-clamp-3" x-text="headline"></h2>
-                        </div>
-
-                        <!-- Divider Ornament -->
-                        <div class="flex items-center justify-center gap-2 my-1 opacity-70">
-                            <div class="w-8 h-[1px]" :style="currentTheme.accentBg"></div>
-                            <div class="w-1.5 h-1.5 rounded-full" :style="currentTheme.accentBg"></div>
-                            <div class="w-8 h-[1px]" :style="currentTheme.accentBg"></div>
-                        </div>
-
-                        <!-- Speaker & Designation Area -->
-                        <div class="text-center pb-1">
-                            <h3 class="font-bold text-base sm:text-lg leading-tight" :style="currentTheme.speakerColor" x-text="speakerName"></h3>
-                            <p class="text-xs sm:text-sm font-medium text-slate-200 mt-0.5 opacity-90 line-clamp-1" x-text="designation"></p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- CONTROLS & FORM SECTION -->
-        <div class="lg:col-span-6 space-y-5">
-            
-            <!-- Theme Selector -->
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fas fa-palette text-emerald-600"></i> থিম ও কালার স্টাইল (Theme)
-                </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <template x-for="theme in themes" :key="theme.id">
-                        <button @click="selectedTheme = theme.id" 
-                            :class="selectedTheme === theme.id ? 'ring-2 ring-emerald-600 ring-offset-2 border-transparent' : 'border-slate-200'" 
-                            class="p-3 rounded-2xl border text-left transition flex flex-col gap-2 bg-slate-50 hover:bg-slate-100">
-                            <div class="w-full h-6 rounded-lg shadow-inner" :style="theme.previewStyle"></div>
-                            <span class="text-xs font-bold text-slate-700" x-text="theme.name"></span>
-                        </button>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Image & Logo Uploads -->
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fas fa-image text-emerald-600"></i> ছবি ও লোগো আপলোড
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">নিউজ ফটো (News Photo)</label>
-                        <input type="file" accept="image/*" @change="handlePhotoUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">লোগো / ওয়াটারমার্ক (Logo)</label>
-                        <input type="file" accept="image/*" @change="handleLogoUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Text & Headline Inputs -->
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <i class="fas fa-pen-nib text-emerald-600"></i> খবরের বিবরণ ও বক্তব্য
-                </h3>
-                
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">মূল শিরোনাম (Headline)</label>
-                    <textarea rows="3" x-model="headline" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition resize-none"></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">বক্তা / ব্যক্তির নাম (Speaker)</label>
-                        <input type="text" x-model="speakerName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">পদবী / পরিচয় (Designation)</label>
-                        <input type="text" x-model="designation" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Download Button (Bottom) -->
-            <button @click="downloadCard()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-xl shadow-emerald-600/20 transition flex items-center justify-center gap-2 text-base">
-                <i class="fas fa-cloud-arrow-down text-lg"></i> ফটো কার্ড ডাউনলোড করুন (PNG)
-            </button>
-
-        </div>
-
-    </main>
-
-    <!-- Application Script -->
+    <!-- Script to handle live preview and download -->
     <script>
-        function cardApp() {
-            return {
-                headline: 'ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা',
-                speakerName: 'মুফতি সৈয়দ ফয়জুল করীম',
-                designation: 'সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ',
-                photoUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1000&q=80',
-                logoUrl: 'https://placehold.co/150x150/064e3b/ffffff?text=LOGO',
-                
-                selectedTheme: 'darkgreen',
-                toast: { show: false, message: '' },
+        const inputPageName = document.getElementById('inputPageName');
+        const inputDate = document.getElementById('inputDate');
+        const inputHeadline = document.getElementById('inputHeadline');
+        const inputName = document.getElementById('inputName');
+        const inputDesig = document.getElementById('inputDesig');
+        const themeSelector = document.getElementById('themeSelector');
 
-                showToast(msg) {
-                    this.toast = { show: true, message: msg };
-                    setTimeout(() => { this.toast.show = false; }, 3000);
-                },
+        const displayPageName = document.getElementById('displayPageName');
+        const displayDate = document.getElementById('displayDate');
+        const displayHeadline = document.getElementById('displayHeadline');
+        const displayName = document.getElementById('displayName');
+        const displayDesig = document.getElementById('displayDesig');
+        const authorBox = document.getElementById('authorBox');
+        const cardThemeBg = document.getElementById('cardThemeBg');
 
-                themes: [
-                    {
-                        id: 'darkgreen',
-                        name: 'ডিপ গ্রিন',
-                        previewStyle: 'background: linear-gradient(135deg, #022c22, #064e3b);',
-                        bgGradient: 'background-color: #022c22;',
-                        panelBg: 'background: linear-gradient(to bottom, #064e3b, #022c22);',
-                        accentBar: 'background: linear-gradient(90deg, #10b981, #f59e0b, #10b981);',
-                        accentBg: 'background-color: #f59e0b;',
-                        speakerColor: 'color: #fde047;'
-                    },
-                    {
-                        id: 'navy',
-                        name: 'নেভি ব্লু',
-                        previewStyle: 'background: linear-gradient(135deg, #0f172a, #1e3a8a);',
-                        bgGradient: 'background-color: #0f172a;',
-                        panelBg: 'background: linear-gradient(to bottom, #1e3a8a, #0f172a);',
-                        accentBar: 'background: linear-gradient(90deg, #38bdf8, #fbbf24, #38bdf8);',
-                        accentBg: 'background-color: #fbbf24;',
-                        speakerColor: 'color: #fef08a;'
-                    },
-                    {
-                        id: 'maroon',
-                        name: 'মেরুন রেড',
-                        previewStyle: 'background: linear-gradient(135deg, #450a0a, #7f1d1d);',
-                        bgGradient: 'background-color: #450a0a;',
-                        panelBg: 'background: linear-gradient(to bottom, #7f1d1d, #450a0a);',
-                        accentBar: 'background: linear-gradient(90deg, #f87171, #fde047, #f87171);',
-                        accentBg: 'background-color: #fde047;',
-                        speakerColor: 'color: #fef08a;'
-                    },
-                    {
-                        id: 'charcoal',
-                        name: 'চারকোল ব্ল্যাক',
-                        previewStyle: 'background: linear-gradient(135deg, #09090b, #27272a);',
-                        bgGradient: 'background-color: #09090b;',
-                        panelBg: 'background: linear-gradient(to bottom, #27272a, #09090b);',
-                        accentBar: 'background: linear-gradient(90deg, #a1a1aa, #facc15, #a1a1aa);',
-                        accentBg: 'background-color: #facc15;',
-                        speakerColor: 'color: #fef08a;'
-                    }
-                ],
+        // Live text update handlers
+        inputPageName.addEventListener('input', (e) => displayPageName.innerText = e.target.value);
+        inputDate.addEventListener('input', (e) => displayDate.innerText = e.target.value);
+        inputHeadline.addEventListener('input', (e) => displayHeadline.innerText = e.target.value);
 
-                get currentTheme() {
-                    return this.themes.find(t => t.id === this.selectedTheme) || this.themes[0];
-                },
+        function updateAuthorBox() {
+            const nameVal = inputName.value.trim();
+            const desigVal = inputDesig.value.trim();
 
-                handlePhotoUpload(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => { this.photoUrl = e.target.result; };
-                        reader.readAsDataURL(file);
-                    }
-                },
-
-                handleLogoUpload(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => { this.logoUrl = e.target.result; };
-                        reader.readAsDataURL(file);
-                    }
-                },
-
-                downloadCard() {
-                    const element = document.getElementById('captureCard');
-                    this.showToast('ফটো কার্ড তৈরি হচ্ছে...');
-                    
-                    html2canvas(element, {
-                        scale: 3, // High resolution export
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: null
-                    }).then(canvas => {
-                        const link = document.createElement('a');
-                        link.download = 'news-photo-card.png';
-                        link.href = canvas.toDataURL('image/png');
-                        link.click();
-                        this.showToast('সফলভাবে ডাউনলোড হয়েছে!');
-                    }).catch(err => {
-                        console.err(err);
-                        this.showToast('ডাউনলোড করতে সমস্যা হয়েছে');
-                    });
-                }
+            if(nameVal === '' && desigVal === '') {
+                authorBox.style.display = 'none';
+            } else {
+                authorBox.style.display = 'block';
+                displayName.innerText = nameVal;
+                displayDesig.innerText = desigVal;
+                displayName.style.display = nameVal ? 'block' : 'none';
+                displayDesig.style.display = desigVal ? 'block' : 'none';
             }
         }
+
+        inputName.addEventListener('input', updateAuthorBox);
+        inputDesig.addEventListener('input', updateAuthorBox);
+
+        // Theme change handler
+        themeSelector.addEventListener('change', (e) => {
+            const color = e.target.value;
+            cardThemeBg.style.background = `linear-gradient(to bottom, ${color}, #050f0d)`;
+        });
+
+        // Image upload handler
+        document.getElementById('inputImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewImage').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Logo upload handler
+        document.getElementById('inputLogo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewLogo').src = event.target.result;
+                    document.getElementById('previewWatermark').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Download as PNG
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const card = document.getElementById('photoCard');
+            html2canvas(card, { scale: 3, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'news-photo-card.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
     </script>
 </body>
 </html>
