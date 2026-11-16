@@ -3,381 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্রফেশনাল মাল্টি-ডিজাইন নিউজ ফটো কার্ড জেনারেটর</title>
+    <title>ICAB Media Wing - Photo Card Generator</title>
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Hind Siliguri -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts for Bengali -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- html2canvas for image download -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body { font-family: 'Hind Siliguri', sans-serif; }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen pb-12">
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-6">
 
-    <div class="max-w-md mx-auto p-4">
-        <header class="text-center my-4">
-            <h1 class="text-xl font-bold text-slate-800">৭টি ডিজাইনের নিউজ ফটো কার্ড মেকার</h1>
-            <p class="text-xs text-slate-500">আপনার পছন্দমতো কার্ড স্ট্রাকচার সিলেক্ট করুন</p>
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-amber-400">ICAB Media Wing</h1>
+            <p class="text-slate-400 text-sm">অটো ফটো কার্ড জেনারেটর</p>
         </header>
 
-        <!-- PREVIEW CARD SECTION -->
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-6 border border-slate-200">
-            <div id="photoCard" class="w-full bg-[#0b2721] text-white flex flex-col relative overflow-hidden transition-all duration-300 min-h-[420px]">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Controls Form -->
+            <div class="bg-slate-800 p-4 sm:p-6 rounded-xl shadow-lg border border-slate-700 space-y-4">
+                <h2 class="text-lg font-semibold text-amber-300 border-b border-slate-700 pb-2">তথ্য ইনপুট করুন</h2>
                 
-                <!-- LAYOUT 1: Classic News (Default) -->
-                <div class="layout-box layout-1 flex flex-col h-full">
-                    <div class="bg-white text-slate-900 px-4 py-2.5 flex items-center justify-between border-b border-slate-100">
-                        <div class="flex items-center space-x-2.5">
-                            <img class="previewLogo w-9 h-9 rounded-full object-cover border border-slate-300" src="https://via.placeholder.com/40">
-                            <div>
-                                <h3 class="displayPageName font-bold text-xs leading-tight text-slate-900">ICAB Media Wing</h3>
-                                <div class="flex items-center space-x-1 text-[10px] text-slate-500">
-                                    <span class="displayDate">তারিখ</span>
-                                    <span>•</span>
-                                    <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relative w-full h-52 bg-slate-900 overflow-hidden">
-                        <img class="previewImage w-full h-full object-cover" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                        <div class="absolute top-2.5 right-2.5 bg-black/40 backdrop-blur-md p-1 rounded-full border border-white/20">
-                            <img class="previewWatermark w-6 h-6 rounded-full object-cover" src="https://via.placeholder.com/30">
-                        </div>
-                    </div>
-                    <div class="cardThemeBg p-4 flex flex-col justify-between flex-grow bg-gradient-to-b from-[#0b2721] to-[#04120f]">
-                        <h2 class="displayHeadline text-base font-bold leading-snug text-white mb-3 text-center">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</h2>
-                        <div class="authorBox text-center pt-2.5 border-t border-white/15">
-                            <h4 class="displayName text-amber-400 font-bold text-sm leading-tight">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-300 text-[11px] mt-0.5">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LAYOUT 2: Full-Screen Overlay Gradient -->
-                <div class="layout-box layout-2 hidden flex flex-col h-full relative min-h-[440px] justify-end">
-                    <div class="absolute inset-0 w-full h-full">
-                        <img class="previewImage w-full h-full object-cover" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20"></div>
-                    </div>
-                    <div class="absolute top-3 left-3 right-3 flex justify-between items-center z-10">
-                        <div class="flex items-center space-x-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white">
-                            <img class="previewLogo w-6 h-6 rounded-full object-cover" src="https://via.placeholder.com/40">
-                            <span class="displayPageName text-xs font-semibold">ICAB Media Wing</span>
-                        </div>
-                        <span class="displayDate bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">তারিখ</span>
-                    </div>
-                    <div class="relative z-10 p-5 text-center">
-                        <h2 class="displayHeadline text-lg font-bold text-white mb-3 drop-shadow-md">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</h2>
-                        <div class="authorBox inline-block bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15">
-                            <h4 class="displayName text-amber-300 font-bold text-sm">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-200 text-[11px]">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LAYOUT 3: Split Header Banner -->
-                <div class="layout-box layout-3 hidden flex flex-col h-full bg-slate-900">
-                    <div class="cardThemeBg px-4 py-3 text-white flex items-center justify-between border-b border-white/10">
-                        <div class="flex items-center space-x-2.5">
-                            <img class="previewLogo w-8 h-8 rounded-full object-cover border-2 border-white/30" src="https://via.placeholder.com/40">
-                            <div>
-                                <h3 class="displayPageName font-bold text-xs">ICAB Media Wing</h3>
-                                <p class="displayDate text-[10px] text-slate-300">তারিখ</p>
-                            </div>
-                        </div>
-                        <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded text-white font-medium">বিশেষ প্রতিবেদন</span>
-                    </div>
-                    <div class="relative w-full h-48">
-                        <img class="previewImage w-full h-full object-cover" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                    </div>
-                    <div class="p-4 bg-slate-900 text-center flex-grow flex flex-col justify-between">
-                        <h2 class="displayHeadline text-base font-bold text-white">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</h2>
-                        <div class="authorBox pt-2 border-t border-slate-800">
-                            <h4 class="displayName text-amber-400 font-bold text-sm">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-400 text-[11px]">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LAYOUT 4: Breaking News Alert -->
-                <div class="layout-box layout-4 hidden flex flex-col h-full bg-slate-950">
-                    <div class="bg-red-600 text-white px-4 py-1.5 flex items-center justify-between text-xs font-bold tracking-wider">
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-white animate-ping"></span> ব্রেকিং নিউজ</span>
-                        <span class="displayDate text-[11px] font-normal">তারিখ</span>
-                    </div>
-                    <div class="bg-white px-3 py-2 flex items-center space-x-2 border-b">
-                        <img class="previewLogo w-7 h-7 rounded-full object-cover" src="https://via.placeholder.com/40">
-                        <span class="displayPageName text-xs font-bold text-slate-800">ICAB Media Wing</span>
-                    </div>
-                    <div class="relative w-full h-44">
-                        <img class="previewImage w-full h-full object-cover" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                    </div>
-                    <div class="p-4 bg-slate-900 text-center">
-                        <h2 class="displayHeadline text-base font-bold text-white mb-2">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</h2>
-                        <div class="authorBox">
-                            <h4 class="displayName text-amber-400 font-bold text-xs">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-400 text-[10px]">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LAYOUT 5: Quote Statement Card -->
-                <div class="layout-box layout-5 hidden flex flex-col h-full bg-[#111827] text-white p-6 justify-between relative">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                        <div class="flex items-center space-x-2.5">
-                            <img class="previewLogo w-8 h-8 rounded-full object-cover" src="https://via.placeholder.com/40">
-                            <span class="displayPageName text-xs font-semibold text-slate-300">ICAB Media Wing</span>
-                        </div>
-                        <span class="displayDate text-xs text-slate-400">তারিখ</span>
-                    </div>
-                    <div class="my-6 text-center relative">
-                        <span class="text-6{-px} text-amber-500/20 absolute -top-8 left-0 font-serif">“</span>
-                        <h2 class="displayHeadline text-lg font-bold leading-relaxed text-amber-100">"ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা"</h2>
-                    </div>
-                    <div class="authorBox bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-center flex items-center space-x-3">
-                        <img class="previewImage w-12 h-12 rounded-full object-cover border border-amber-400 flex-shrink-0" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                        <div class="text-left">
-                            <h4 class="displayName text-amber-400 font-bold text-sm">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-400 text-[11px]">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LAYOUT 6: Minimalist Clean Light -->
-                <div class="layout-box layout-6 hidden flex flex-col h-full bg-white text-slate-900">
-                    <div class="px-4 py-3 flex justify-between items-center border-b border-slate-200">
-                        <div class="flex items-center space-x-2">
-                            <img class="previewLogo w-7 h-7 rounded-full object-cover border" src="https://via.placeholder.com/40">
-                            <span class="displayPageName font-bold text-xs text-slate-800">ICAB Media Wing</span>
-                        </div>
-                        <span class="displayDate text-[11px] text-slate-500">তারিখ</span>
-                    </div>
-                    <div class="relative w-full h-48 bg-slate-100">
-                        <img class="previewImage w-full h-full object-cover" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                    </div>
-                    <div class="p-4 bg-white text-center flex-grow flex flex-col justify-between">
-                        <h2 class="displayHeadline text-base font-bold text-slate-900">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</h2>
-                        <div class="authorBox pt-2 border-t border-slate-100">
-                            <h4 class="displayName text-emerald-700 font-bold text-sm">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-500 text-[11px]">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LAYOUT 7: Magazine Editorial -->
-                <div class="layout-box layout-7 hidden flex flex-col h-full bg-slate-900 p-3 border-4 border-amber-500/40">
-                    <div class="flex justify-between items-center px-2 py-1 mb-2 border-b border-white/10">
-                        <div class="flex items-center space-x-2">
-                            <img class="previewLogo w-6 h-6 rounded-full object-cover" src="https://via.placeholder.com/40">
-                            <span class="displayPageName text-xs font-bold text-amber-400 tracking-wider uppercase">ICAB Media Wing</span>
-                        </div>
-                        <span class="displayDate text-[10px] text-slate-300">তারিখ</span>
-                    </div>
-                    <div class="relative w-full h-44 rounded-lg overflow-hidden border border-white/10 mb-3">
-                        <img class="previewImage w-full h-full object-cover" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80">
-                    </div>
-                    <div class="text-center px-1">
-                        <h2 class="displayHeadline text-base font-bold text-white mb-2 leading-snug">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</h2>
-                        <div class="authorBox pt-2 border-t border-white/10">
-                            <h4 class="displayName text-amber-400 font-bold text-xs">মুফতি সৈয়দ ফয়জুল করীম</h4>
-                            <p class="displayDesig text-slate-300 text-[10px]">সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- CONTROLS & INPUTS FORM -->
-        <div class="bg-white rounded-2xl shadow-sm p-4 space-y-4 border border-slate-200">
-            <h2 class="font-semibold text-slate-700 text-sm border-b pb-2">ডিজাইন লেআউট সিলেক্ট করুন</h2>
-
-            <!-- Layout Selector Buttons -->
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="switchLayout(1)" class="layout-btn bg-emerald-600 text-white text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition">ফেসবুক ক্লাসিক</button>
-                <button onclick="switchLayout(2)" class="layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition">ওভারলে গ্রেডিয়েন্ট</button>
-                <button onclick="switchLayout(3)" class="layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition">স্প্লিট ব্যানার</button>
-                <button onclick="switchLayout(4)" class="layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition">ব্রেকিং নিউজ</button>
-                <button onclick="switchLayout(5)" class="layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition">কোট স্টেটমেন্ট</button>
-                <button onclick="switchLayout(6)" class="layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition">মিনিমালিস্ট লাইট</button>
-                <button onclick="switchLayout(7)" class="layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition col-span-3">ম্যাগাজিন এডিটর</button>
-            </div>
-
-            <h2 class="font-semibold text-slate-700 text-sm border-b pb-2 pt-2">তথ্য ও কাস্টমাইজেশন</h2>
-
-            <!-- Theme Selector -->
-            <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">কার্ড থিম কালার</label>
-                <select id="themeSelector" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
-                    <option value="#0b2721">ডার্ক গ্রিন (সবুজ)</option>
-                    <option value="#1e293b">নেভি ব্লু (নীল)</option>
-                    <option value="#581c87">ডিপ পার্পল</option>
-                    <option value="#7f1d1d">মেরুন রেড (লাল)</option>
-                </select>
-            </div>
-
-            <!-- Page Name & Date -->
-            <div class="grid grid-cols-2 gap-3">
+                <!-- Category -->
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">পেজের নাম</label>
-                    <input type="text" id="inputPageName" value="ICAB Media Wing" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">ক্যাটাগরি / ট্যাগ</label>
+                    <input type="text" id="categoryInput" value="প্রেস বিজ্ঞপ্তি" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
                 </div>
+
+                <!-- Headline (Multi-line) -->
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">তারিখ (অটো আপডেট)</label>
-                    <input type="text" id="inputDate" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                    <label class="block text-sm font-medium text-slate-300 mb-1">প্রধান শিরোনাম (একাধিক লাইন লিখতে পারেন)</label>
+                    <textarea id="titleInput" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">এখানে আপনার শিরোনাম লিখুন...</textarea>
                 </div>
+
+                <!-- Subtitle / Description (Multi-line) -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">ছোট বিবরণ বা হাইলাইট (২-৩ লাইন লিখতে পারেন)</label>
+                    <textarea id="subtitleInput" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">আইসিএবি মিডিয়া উইং আপডেট</textarea>
+                </div>
+
+                <!-- Date & Footer -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">তারিখ</label>
+                        <input type="text" id="dateInput" value="১৭ নভেম্বর ২০২৬" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-1">ফুটর টেক্সট</label>
+                        <input type="text" id="footerInput" value="ICAB Media Wing" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
+                    </div>
+                </div>
+
+                <!-- Logo Upload -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">লোগো আপলোড (স্থায়ীভাবে সংরক্ষিত হবে)</label>
+                    <input type="file" id="logoUpload" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
+                </div>
+
+                <!-- Download Button -->
+                <button id="downloadBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 px-4 rounded-lg transition shadow-md cursor-pointer mt-2">
+                    ফটো কার্ড ডাউনলোড করুন (PNG)
+                </button>
             </div>
 
-            <!-- Logo & Image Uploads -->
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">লোগো আপলোড</label>
-                    <input type="file" id="inputLogo" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">প্রধান ছবি আপলোড</label>
-                    <input type="file" id="inputImage" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700">
+            <!-- Live Preview -->
+            <div class="flex flex-col items-center justify-center bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700">
+                <h2 class="text-sm font-medium text-slate-400 mb-3">লাইভ প্রিভিউ</h2>
+                <div class="w-full max-w-[360px] aspect-square shadow-2xl rounded-lg overflow-hidden border border-slate-700">
+                    <canvas id="photoCanvas" width="1080" height="1080" class="w-full h-full object-contain"></canvas>
                 </div>
             </div>
-
-            <!-- Headline Input -->
-            <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">মূল শিরোনাম</label>
-                <textarea id="inputHeadline" rows="2" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা</textarea>
-            </div>
-
-            <!-- Optional Name & Designation -->
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">নাম (ঐচ্ছিক)</label>
-                    <input type="text" id="inputName" value="মুফতি সৈয়দ ফয়জুল করীম" placeholder="খালি রাখা যাবে" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">পদবী (ঐচ্ছিক)</label>
-                    <input type="text" id="inputDesig" value="সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ" placeholder="খালি রাখা যাবে" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
-                </div>
-            </div>
-
-            <!-- Download Button -->
-            <button id="downloadBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                <span>হাই-কোয়ালিটি ছবি ডাউনলোড করুন</span>
-            </button>
         </div>
     </div>
 
-    <!-- Scripting -->
     <script>
-        let currentLayout = 1;
+        const canvas = document.getElementById('photoCanvas');
+        const ctx = canvas.getContext('2d');
 
-        function switchLayout(layoutNum) {
-            currentLayout = layoutNum;
-            document.querySelectorAll('.layout-box').forEach(box => box.classList.add('hidden'));
-            document.querySelector(`.layout-${layoutNum}`).classList.remove('hidden');
+        // Inputs
+        const categoryInput = document.getElementById('categoryInput');
+        const titleInput = document.getElementById('titleInput');
+        const subtitleInput = document.getElementById('subtitleInput');
+        const dateInput = document.getElementById('dateInput');
+        const footerInput = document.getElementById('footerInput');
+        const logoUpload = document.getElementById('logoUpload');
+        const downloadBtn = document.getElementById('downloadBtn');
 
-            document.querySelectorAll('.layout-btn').forEach((btn, idx) => {
-                if((idx + 1) === layoutNum) {
-                    btn.className = "layout-btn bg-emerald-600 text-white text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition";
-                } else {
-                    btn.className = "layout-btn bg-slate-200 text-slate-700 text-xs py-2 px-2 rounded-lg font-medium shadow-sm transition";
-                }
-            });
+        let logoImage = null;
+
+        // Load saved logo from localStorage if available
+        const savedLogo = localStorage.getItem('icab_logo');
+        if (savedLogo) {
+            logoImage = new Image();
+            logoImage.src = savedLogo;
+            logoImage.onload = () => drawCard();
+        } else {
+            drawCard();
         }
 
-        // Auto date in Bengali
-        const months = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
-        const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-        function toBengaliNum(num) {
-            return num.toString().split('').map(d => bengaliDigits[d] !== undefined ? bengaliDigits[d] : d).join('');
-        }
-        const today = new Date();
-        const autoFormattedDate = toBengaliNum(today.getDate()) + ' ' + months[today.getMonth()];
-        
-        document.getElementById('inputDate').value = autoFormattedDate;
-        document.querySelectorAll('.displayDate').forEach(el => el.innerText = autoFormattedDate);
-
-        // Sync inputs across all layout variants
-        const inputPageName = document.getElementById('inputPageName');
-        const inputDate = document.getElementById('inputDate');
-        const inputHeadline = document.getElementById('inputHeadline');
-        const inputName = document.getElementById('inputName');
-        const inputDesig = document.getElementById('inputDesig');
-        const themeSelector = document.getElementById('themeSelector');
-
-        inputPageName.addEventListener('input', (e) => {
-            document.querySelectorAll('.displayPageName').forEach(el => el.innerText = e.target.value);
-        });
-        inputDate.addEventListener('input', (e) => {
-            document.querySelectorAll('.displayDate').forEach(el => el.innerText = e.target.value);
-        });
-        inputHeadline.addEventListener('input', (e) => {
-            document.querySelectorAll('.displayHeadline').forEach(el => el.innerText = e.target.value);
-        });
-
-        function updateAuthorBoxes() {
-            const nameVal = inputName.value.trim();
-            const desigVal = inputDesig.value.trim();
-
-            document.querySelectorAll('.authorBox').forEach(box => {
-                if(nameVal === '' && desigVal === '') {
-                    box.style.display = 'none';
-                } else {
-                    box.style.display = 'block';
-                    const nameEl = box.querySelector('.displayName');
-                    const desigEl = box.querySelector('.displayDesig');
-                    if(nameEl) { nameEl.innerText = nameVal; nameEl.style.display = nameVal ? 'block' : 'none'; }
-                    if(desigEl) { desigEl.innerText = desigVal; desigEl.style.display = desigVal ? 'block' : 'none'; }
-                }
-            });
-        }
-
-        inputName.addEventListener('input', updateAuthorBoxes);
-        inputDesig.addEventListener('input', updateAuthorBoxes);
-
-        // Theme Background changer
-        themeSelector.addEventListener('change', (e) => {
-            const color = e.target.value;
-            document.querySelectorAll('.cardThemeBg').forEach(el => {
-                el.style.background = `linear-gradient(to bottom, ${color}, #04120f)`;
-            });
-        });
-
-        // Image uploads
-        document.getElementById('inputImage').addEventListener('change', function(e) {
+        // Handle logo upload and save to localStorage
+        logoUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    document.querySelectorAll('.previewImage').forEach(img => img.src = event.target.result);
-                }
+                    localStorage.setItem('icab_logo', event.target.result);
+                    logoImage = new Image();
+                    logoImage.src = event.target.result;
+                    logoImage.onload = () => drawCard();
+                };
                 reader.readAsDataURL(file);
             }
         });
 
-        document.getElementById('inputLogo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.querySelectorAll('.previewLogo').forEach(img => img.src = event.target.result);
-                    document.querySelectorAll('.previewWatermark').forEach(img => img.src = event.target.result);
-                }
-                reader.readAsDataURL(file);
-            }
+        // Event listeners for real-time update
+        [categoryInput, titleInput, subtitleInput, dateInput, footerInput].forEach(input => {
+            input.addEventListener('input', drawCard);
         });
 
-        // Download PNG
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            const activeCard = document.querySelector(`.layout-${currentLayout}`);
-            html2canvas(activeCard, { scale: 3, useCORS: true }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `news-photo-card-layout-${currentLayout}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            });
+        // Multi-line and auto-wrap text renderer
+        function drawMultiLineText(context, text, x, y, maxWidth, lineHeight) {
+            const paragraphs = text.split('\n');
+            let currentY = y;
+            for (let p = 0; p < paragraphs.length; p++) {
+                currentY = drawParagraph(context, paragraphs[p], x, currentY, maxWidth, lineHeight);
+            }
+            return currentY;
+        }
+
+        function drawParagraph(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+
+            if (text.trim() === '') {
+                return currentY + lineHeight;
+            }
+
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = context.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, currentY);
+            return currentY + lineHeight;
+        }
+
+        function drawCard() {
+            // Background - Professional Corporate Gradient
+            const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+            bgGrad.addColorStop(0, '#0a192f');
+            bgGrad.addColorStop(0.5, '#1e293b');
+            bgGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            // Decorative shapes
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+            ctx.beginPath();
+            ctx.arc(950, 120, 250, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
+            ctx.beginPath();
+            ctx.arc(150, 950, 300, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Top Header Bar
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+            ctx.fillRect(0, 0, 1080, 140);
+            
+            // Gold Border Line
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(0, 0, 1080, 12);
+
+            // Draw Logo
+            if (logoImage) {
+                const logoSize = 100;
+                ctx.drawImage(logoImage, 60, 30, logoSize, logoSize);
+            } else {
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(60, 30, 100, 100);
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = 'bold 24px "Hind Siliguri", sans-serif';
+                ctx.fillText('LOGO', 75, 88);
+            }
+
+            // Brand Title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 44px "Hind Siliguri", sans-serif';
+            ctx.fillText('ICAB Media Wing', 185, 80);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = '24px "Hind Siliguri", sans-serif';
+            ctx.fillText('Official Announcement & News Update', 185, 115);
+
+            // Category Badge
+            const categoryText = categoryInput.value || 'আপডেট';
+            ctx.font = 'bold 28px "Hind Siliguri", sans-serif';
+            const catWidth = ctx.measureText(categoryText).width + 50;
+            
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.roundRect(60, 180, catWidth, 55, 12);
+            ctx.fill();
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillText(categoryText, 85, 218);
+
+            // Date
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '26px "Hind Siliguri", sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(dateInput.value, 1020, 218);
+            ctx.textAlign = 'left';
+
+            // Divider Line
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(60, 260);
+            ctx.lineTo(1020, 260);
+            ctx.stroke();
+
+            // Main Title (Multi-line supported)
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 50px "Hind Siliguri", sans-serif';
+            drawMultiLineText(ctx, titleInput.value, 60, 340, 960, 68);
+
+            // Subtitle / Highlight Box
+            ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+            ctx.beginPath();
+            ctx.roundRect(60, 730, 960, 135, 16);
+            ctx.fill();
+
+            // Left gold accent bar for subtitle box
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(60, 730, 10, 135);
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '28px "Hind Siliguri", sans-serif';
+            drawMultiLineText(ctx, subtitleInput.value, 90, 775, 900, 40);
+
+            // Footer bar
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 980, 1080, 100);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
+            ctx.fillText(footerInput.value, 60, 1038);
+
+            // Decorative dots
+            ctx.fillStyle = '#334155';
+            for(let i=0; i<5; i++) {
+                ctx.beginPath();
+                ctx.arc(950 + (i * 25), 1038, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Download Action
+        downloadBtn.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'icab-media-card-' + Date.now() + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
         });
     </script>
 </body>
