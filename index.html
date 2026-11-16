@@ -1,296 +1,291 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="bn" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Of Rising Bangla - ফটো কার্ড জেনারেটর</title>
+    <title>News Photo Card Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Alpine.js for reactive state management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- html2canvas for downloading card as PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts: Hind Siliguri for authentic Bengali typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { bengali: ['Hind Siliguri', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary: #e50914;
-            --bg: #0f172a;
-            --panel-bg: #1e293b;
-            --input-bg: #334155;
-            --text: #f8fafc;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 15px; }
-
-        header { text-align: center; margin-bottom: 20px; padding: 15px; background: var(--panel-bg); border-radius: 10px; border-bottom: 3px solid var(--primary); }
-        header h1 { color: var(--primary); font-size: 26px; margin-bottom: 5px; }
-        header p { color: #94a3b8; font-size: 13px; }
-
-        /* Style Switcher Tabs */
-        .style-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn {
-            flex: 1; padding: 12px; border: 2px solid #475569; background: #1e293b;
-            color: #fff; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 14px;
-        }
-        .tab-btn.active { background: var(--primary); border-color: var(--primary); }
-
-        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
-        @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
-
-        .panel { background: var(--panel-bg); padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; color: #cbd5e1; font-weight: 600; }
-        
-        input[type="text"], textarea, select, input[type="color"], input[type="range"] {
-            width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #475569; background: var(--input-bg); color: #fff; outline: none; font-size: 14px;
-        }
-
-        .row-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .btn-download {
-            width: 100%; padding: 14px; border: none; border-radius: 8px; background: #22c55e;
-            color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s;
-        }
-        .btn-download:hover { background: #16a34a; }
-
-        .preview-area { display: flex; flex-direction: column; align-items: center; position: sticky; top: 20px; }
-        canvas { max-width: 100%; height: auto; border: 2px solid #334155; border-radius: 12px; background: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 min-h-full flex flex-col antialiased" x-data="cardApp()">
 
-    <header>
-        <h1>𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚</h1>
-        <p>প্রফেশনাল নিউজ ফটো কার্ড ও কাস্টম এডিটর</p>
+    <!-- Toast Notification -->
+    <div class="fixed top-5 right-5 z-50 transition-all duration-300 transform" x-show="toast.show" x-transition x-cloak>
+        <div class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl text-white font-medium bg-emerald-600">
+            <i class="fas fa-check-circle"></i>
+            <span x-text="toast.message"></span>
+        </div>
+    </div>
+
+    <!-- Header Navbar -->
+    <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-40 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-700 to-teal-600 flex items-center justify-center text-white shadow-md">
+                <i class="fas fa-newspaper text-sm"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-900 text-base leading-tight">নিউজ ফটো কার্ড জেনারেটর</h1>
+                <p class="text-[11px] text-slate-500 font-medium">Professional News Social Card Builder</p>
+            </div>
+        </div>
+        <button @click="downloadCard()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl shadow-md text-xs flex items-center gap-2 transition active:scale-95">
+            <i class="fas fa-download"></i> Download PNG
+        </button>
     </header>
 
-    <div class="container">
-        <!-- কন্ট্রোল প্যানেল -->
-        <div class="panel">
-            <!-- মোড সিলেকশন ট্যাব -->
-            <div class="style-tabs">
-                <button class="tab-btn active" id="btnMode1" onclick="setDesignMode(1)">📌 ১৫ টেমপ্লেট মোড</button>
-                <button class="tab-btn" id="btnMode2" onclick="setDesignMode(2)">🎨 কাস্টম এডিটর</button>
-            </div>
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- PREVIEW SECTION (Sticky or Top on mobile) -->
+        <div class="lg:col-span-6 flex flex-col items-center justify-center lg:sticky lg:top-20">
+            <div class="w-full max-w-[480px]">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Preview (1:1 Square)</span>
+                    <span class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">HD Ready</span>
+                </div>
 
-            <!-- টেমপ্লেট ড্রপডাউন (মোড ১) -->
-            <div class="form-group" id="templateGroup">
-                <label for="templateSelect">ডিজাইন টেমপ্লেট:</label>
-                <select id="templateSelect" onchange="drawCard()">
-                    <option value="1">১. ব্রেকিং নিউজ (Breaking News)</option>
-                    <option value="2" selected>২. সাধারণ নিউজ (Standard News)</option>
-                    <option value="3">৩. উক্তি / কোট কার্ড (Quote)</option>
-                    <option value="4">৪. শোক সংবাদ (Condolence)</option>
-                    <option value="5">৫. খেলাধুলা (Sports Special)</option>
-                    <option value="6">৬. জনমত পোল (Opinion Poll)</option>
-                    <option value="7">৭. জরুরি সতর্কতা (Alert/Warning)</option>
-                    <option value="8">৮. অর্থনীতি ও শেয়ারবাজার (Business)</option>
-                    <option value="9">৯. আন্তর্জাতিক সংবাদ (International)</option>
-                    <option value="10">১০. বিনোদন ও গ্ল্যামার (Entertainment)</option>
-                    <option value="11">১১. রাজনীতি (Politics Special)</option>
-                    <option value="12">১২. আবহাওয়া বার্তা (Weather Update)</option>
-                    <option value="13">১৩. শুভেচ্ছা ও জন্মদিন (Greetings)</option>
-                    <option value="14">১৪. ইতিহাসে আজকের দিন (History)</option>
-                    <option value="15">১৫. ফ্যাক্ট চেক (Fact Check)</option>
-                </select>
-            </div>
-
-            <!-- কাস্টম কালার ও ফন্ট কন্ট্রোল (মোড ২) -->
-            <div id="customControls" style="display: none;">
-                <div class="row-group">
-                    <div class="form-group">
-                        <label for="themeColor">থিম কালার:</label>
-                        <input type="color" id="themeColor" value="#e50914" oninput="drawCard()">
+                <!-- THE ACTUAL CARD TO EXPORT -->
+                <div id="captureCard" class="w-full aspect-square relative overflow-hidden shadow-2xl flex flex-col font-bengali select-none rounded-2xl lg:rounded-3xl border border-slate-200" :style="currentTheme.bgGradient">
+                    
+                    <!-- Top News Photo Area (approx 55% height) -->
+                    <div class="w-full h-[58%] relative overflow-hidden bg-slate-900">
+                        <img :src="photoUrl" alt="News Image" class="w-full h-full object-cover">
+                        <!-- Gradient overlay for smooth blend -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
+                        
+                        <!-- Top-Right Logo / Watermark -->
+                        <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-md p-1 rounded-full shadow-lg border border-white/20 flex items-center justify-center w-12 h-12 overflow-hidden">
+                            <img :src="logoUrl" alt="Logo" class="w-full h-full object-cover rounded-full">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="fontSize">ফন্ট সাইজ: <span id="fontVal">44</span>px</label>
-                        <input type="range" id="fontSize" min="30" max="60" value="44" oninput="document.getElementById('fontVal').innerText=this.value; drawCard()">
+
+                    <!-- Bottom Content Panel -->
+                    <div class="w-full h-[42%] px-6 py-4 flex flex-col justify-between relative" :style="currentTheme.panelBg">
+                        <!-- Decorative Top Glow Line -->
+                        <div class="absolute top-0 left-0 right-0 h-1" :style="currentTheme.accentBar"></div>
+
+                        <!-- Headline Area -->
+                        <div>
+                            <h2 class="text-white font-bold text-lg sm:text-xl leading-snug tracking-tight line-clamp-3" x-text="headline"></h2>
+                        </div>
+
+                        <!-- Divider Ornament -->
+                        <div class="flex items-center justify-center gap-2 my-1 opacity-70">
+                            <div class="w-8 h-[1px]" :style="currentTheme.accentBg"></div>
+                            <div class="w-1.5 h-1.5 rounded-full" :style="currentTheme.accentBg"></div>
+                            <div class="w-8 h-[1px]" :style="currentTheme.accentBg"></div>
+                        </div>
+
+                        <!-- Speaker & Designation Area -->
+                        <div class="text-center pb-1">
+                            <h3 class="font-bold text-base sm:text-lg leading-tight" :style="currentTheme.speakerColor" x-text="speakerName"></h3>
+                            <p class="text-xs sm:text-sm font-medium text-slate-200 mt-0.5 opacity-90 line-clamp-1" x-text="designation"></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS & FORM SECTION -->
+        <div class="lg:col-span-6 space-y-5">
+            
+            <!-- Theme Selector -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fas fa-palette text-emerald-600"></i> থিম ও কালার স্টাইল (Theme)
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <template x-for="theme in themes" :key="theme.id">
+                        <button @click="selectedTheme = theme.id" 
+                            :class="selectedTheme === theme.id ? 'ring-2 ring-emerald-600 ring-offset-2 border-transparent' : 'border-slate-200'" 
+                            class="p-3 rounded-2xl border text-left transition flex flex-col gap-2 bg-slate-50 hover:bg-slate-100">
+                            <div class="w-full h-6 rounded-lg shadow-inner" :style="theme.previewStyle"></div>
+                            <span class="text-xs font-bold text-slate-700" x-text="theme.name"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Image & Logo Uploads -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fas fa-image text-emerald-600"></i> ছবি ও লোগো আপলোড
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">নিউজ ফটো (News Photo)</label>
+                        <input type="file" accept="image/*" @change="handlePhotoUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">লোগো / ওয়াটারমার্ক (Logo)</label>
+                        <input type="file" accept="image/*" @change="handleLogoUpload" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
                     </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="category">ক্যাটাগরি / ট্যাগ:</label>
-                <input type="text" id="category" value="জাতীয়" oninput="drawCard()">
+            <!-- Text & Headline Inputs -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fas fa-pen-nib text-emerald-600"></i> খবরের বিবরণ ও বক্তব্য
+                </h3>
+                
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">মূল শিরোনাম (Headline)</label>
+                    <textarea rows="3" x-model="headline" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition resize-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">বক্তা / ব্যক্তির নাম (Speaker)</label>
+                        <input type="text" x-model="speakerName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">পদবী / পরিচয় (Designation)</label>
+                        <input type="text" x-model="designation" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition">
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="headline">সংবাদের শিরোনাম বা উক্তি:</label>
-                <textarea id="headline" rows="3" oninput="drawCard()">ফাহিম স্টাইল ও ১৫টি টেমপ্লেট নিয়ে আপডেট সম্পন্ন হয়েছে।</textarea>
-            </div>
+            <!-- Download Button (Bottom) -->
+            <button @click="downloadCard()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-xl shadow-emerald-600/20 transition flex items-center justify-center gap-2 text-base">
+                <i class="fas fa-cloud-arrow-down text-lg"></i> ফটো কার্ড ডাউনলোড করুন (PNG)
+            </button>
 
-            <div class="form-group" id="subheadBox">
-                <label for="subhead">সাব-হেডলাইন / বক্তার নাম:</label>
-                <input type="text" id="subhead" value="বিশেষ প্রতিনিধি" oninput="drawCard()">
-            </div>
-
-            <!-- ইমেজ জুম কন্ট্রোল -->
-            <div class="form-group">
-                <label for="imgZoom">ছবির সাইজ/জুম: <span id="zoomVal">1.0</span>x</label>
-                <input type="range" id="imgZoom" min="0.5" max="2.0" step="0.1" value="1.0" oninput="document.getElementById('zoomVal').innerText=this.value; drawCard()">
-            </div>
-
-            <div class="form-group">
-                <label for="bgImage">সংবাদের মূল ছবি আপলোড করুন:</label>
-                <input type="file" id="bgImage" accept="image/*">
-            </div>
-
-            <div class="form-group">
-                <label for="logoImage">লোগো আপলোড (PNG):</label>
-                <input type="file" id="logoImage" accept="image/*">
-            </div>
-
-            <button class="btn-download" onclick="downloadCard()">ফটো কার্ড ডাউনলোড (PNG)</button>
         </div>
 
-        <!-- প্রিভিউ এরিয়া -->
-        <div class="panel preview-area">
-            <h2 id="previewTitle" style="font-size: 16px; margin-bottom: 15px; color: #38bdf8;">কার্ড প্রিভিউ (4:5 Ratio)</h2>
-            <canvas id="cardCanvas" width="1080" height="1350"></canvas>
-        </div>
-    </div>
+    </main>
 
+    <!-- Application Script -->
     <script>
-        const canvas = document.getElementById('cardCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        let loadedImg = null;
-        let loadedLogo = null;
-        let activeDesignMode = 1;
+        function cardApp() {
+            return {
+                headline: 'ট্রান্সজেন্ডার ইস্যু নিয়ে শিক্ষামন্ত্রীকে সতর্ক বার্তা',
+                speakerName: 'মুফতি সৈয়দ ফয়জুল করীম',
+                designation: 'সিনিয়র নায়েবে আমীর, ইসলামী আন্দোলন বাংলাদেশ',
+                photoUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1000&q=80',
+                logoUrl: 'https://placehold.co/150x150/064e3b/ffffff?text=LOGO',
+                
+                selectedTheme: 'darkgreen',
+                toast: { show: false, message: '' },
 
-        function setDesignMode(mode) {
-            activeDesignMode = mode;
-            document.getElementById('btnMode1').classList.toggle('active', mode === 1);
-            document.getElementById('btnMode2').classList.toggle('active', mode === 2);
-            document.getElementById('templateGroup').style.display = mode === 1 ? 'block' : 'none';
-            document.getElementById('customControls').style.display = mode === 2 ? 'block' : 'none';
-            drawCard();
-        }
+                showToast(msg) {
+                    this.toast = { show: true, message: msg };
+                    setTimeout(() => { this.toast.show = false; }, 3000);
+                },
 
-        document.getElementById('bgImage').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                loadedImg = new Image();
-                loadedImg.onload = drawCard;
-                loadedImg.src = event.target.result;
-            }
-            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        });
+                themes: [
+                    {
+                        id: 'darkgreen',
+                        name: 'ডিপ গ্রিন',
+                        previewStyle: 'background: linear-gradient(135deg, #022c22, #064e3b);',
+                        bgGradient: 'background-color: #022c22;',
+                        panelBg: 'background: linear-gradient(to bottom, #064e3b, #022c22);',
+                        accentBar: 'background: linear-gradient(90deg, #10b981, #f59e0b, #10b981);',
+                        accentBg: 'background-color: #f59e0b;',
+                        speakerColor: 'color: #fde047;'
+                    },
+                    {
+                        id: 'navy',
+                        name: 'নেভি ব্লু',
+                        previewStyle: 'background: linear-gradient(135deg, #0f172a, #1e3a8a);',
+                        bgGradient: 'background-color: #0f172a;',
+                        panelBg: 'background: linear-gradient(to bottom, #1e3a8a, #0f172a);',
+                        accentBar: 'background: linear-gradient(90deg, #38bdf8, #fbbf24, #38bdf8);',
+                        accentBg: 'background-color: #fbbf24;',
+                        speakerColor: 'color: #fef08a;'
+                    },
+                    {
+                        id: 'maroon',
+                        name: 'মেরুন রেড',
+                        previewStyle: 'background: linear-gradient(135deg, #450a0a, #7f1d1d);',
+                        bgGradient: 'background-color: #450a0a;',
+                        panelBg: 'background: linear-gradient(to bottom, #7f1d1d, #450a0a);',
+                        accentBar: 'background: linear-gradient(90deg, #f87171, #fde047, #f87171);',
+                        accentBg: 'background-color: #fde047;',
+                        speakerColor: 'color: #fef08a;'
+                    },
+                    {
+                        id: 'charcoal',
+                        name: 'চারকোল ব্ল্যাক',
+                        previewStyle: 'background: linear-gradient(135deg, #09090b, #27272a);',
+                        bgGradient: 'background-color: #09090b;',
+                        panelBg: 'background: linear-gradient(to bottom, #27272a, #09090b);',
+                        accentBar: 'background: linear-gradient(90deg, #a1a1aa, #facc15, #a1a1aa);',
+                        accentBg: 'background-color: #facc15;',
+                        speakerColor: 'color: #fef08a;'
+                    }
+                ],
 
-        document.getElementById('logoImage').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                loadedLogo = new Image();
-                loadedLogo.onload = drawCard;
-                loadedLogo.src = event.target.result;
-            }
-            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        });
+                get currentTheme() {
+                    return this.themes.find(t => t.id === this.selectedTheme) || this.themes[0];
+                },
 
-        function drawCard() {
-            const category = document.getElementById('category').value;
-            const headline = document.getElementById('headline').value;
-            const subhead = document.getElementById('subhead').value;
-            const templateId = document.getElementById('templateSelect').value;
-            const themeColor = document.getElementById('themeColor').value;
-            const fontSize = parseInt(document.getElementById('fontSize').value);
-            const zoom = parseFloat(document.getElementById('imgZoom').value);
+                handlePhotoUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { this.photoUrl = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                },
 
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                handleLogoUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { this.logoUrl = e.target.result; };
+                        reader.readAsDataURL(file);
+                    }
+                },
 
-            if (loadedImg) {
-                ctx.save();
-                ctx.translate(1080 / 2, 800 / 2);
-                ctx.scale(zoom, zoom);
-                ctx.drawImage(loadedImg, -1080 / 2, -800 / 2, 1080, 800);
-                ctx.restore();
-            } else {
-                ctx.fillStyle = '#1e293b';
-                ctx.fillRect(0, 0, 1080, 800);
-                ctx.fillStyle = '#64748b';
-                ctx.font = '36px Arial';
-                ctx.fillText('ছবি নির্বাচন করুন', 420, 400);
-            }
-
-            let grad = ctx.createLinearGradient(0, 550, 0, 1350);
-            grad.addColorStop(0, 'rgba(0,0,0,0)');
-            grad.addColorStop(0.35, 'rgba(0,0,0,0.9)');
-            grad.addColorStop(1, '#000000');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 550, 1080, 800);
-
-            let accent = '#e50914';
-            let fSizeToUse = 44;
-
-            if (activeDesignMode === 1) {
-                if(templateId === '3') accent = '#ff9800';
-                else if(templateId === '5') accent = '#00c853';
-                else if(templateId === '7') accent = '#ffd600';
-                else if(templateId === '8') accent = '#00e676';
-                else if(templateId === '9') accent = '#29b6f6';
-                else if(templateId === '10') accent = '#e91e63';
-                fSizeToUse = 44;
-            } else {
-                accent = themeColor;
-                fSizeToUse = fontSize;
-            }
-
-            if (category) {
-                ctx.fillStyle = accent;
-                ctx.fillRect(60, 770, 220, 50);
-                ctx.fillStyle = (activeDesignMode === 1 && templateId === '7') ? '#000' : '#ffffff';
-                ctx.font = 'bold 26px Arial';
-                ctx.fillText(category, 80, 805);
-            }
-
-            if (activeDesignMode === 1 && templateId === '3') {
-                ctx.fillStyle = 'rgba(255, 152, 0, 0.4)';
-                ctx.font = 'bold 150px Georgia';
-                ctx.fillText('“', 45, 870);
-            }
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = `bold ${fSizeToUse}px Arial`;
-            wrapText(ctx, headline, 60, 880, 960, fSizeToUse + 16);
-
-            if (subhead) {
-                ctx.fillStyle = (activeDesignMode === 1 && templateId === '3') ? '#ffcc80' : '#cbd5e1';
-                ctx.font = '28px Arial';
-                wrapText(ctx, subhead, 60, 1120, 960, 40);
-            }
-
-            ctx.fillStyle = accent;
-            ctx.fillRect(0, 1270, 1080, 80);
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 30px Arial';
-            ctx.fillText('𝐕𝐨𝐢𝐜𝐞 𝐎𝐟 𝐑𝐢𝐬𝐢𝐧𝐠 𝐁𝐚𝐧𝐠𝐥𝐚', 60, 1320);
-
-            if (loadedLogo) {
-                ctx.drawImage(loadedLogo, 920, 1280, 100, 60);
-            }
-        }
-
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
-            let words = text.split(' ');
-            let line = '';
-            for (let n = 0; n < words.length; n++) {
-                let testLine = line + words[n] + ' ';
-                let metrics = context.measureText(testLine);
-                if (metrics.width > maxWidth && n > 0) {
-                    context.fillText(line, x, y);
-                    line = words[n] + ' ';
-                    y += lineHeight;
-                } else {
-                    line = testLine;
+                downloadCard() {
+                    const element = document.getElementById('captureCard');
+                    this.showToast('ফটো কার্ড তৈরি হচ্ছে...');
+                    
+                    html2canvas(element, {
+                        scale: 3, // High resolution export
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: null
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = 'news-photo-card.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                        this.showToast('সফলভাবে ডাউনলোড হয়েছে!');
+                    }).catch(err => {
+                        console.err(err);
+                        this.showToast('ডাউনলোড করতে সমস্যা হয়েছে');
+                    });
                 }
             }
-            context.fillText(line, x, y);
         }
-
-        function downloadCard() {
-            const link = document.createElement('a');
-            link.download = 'news-card.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-        drawCard();
     </script>
 </body>
 </html>
