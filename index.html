@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICAB Media Wing - News Photo Card Generator</title>
+    <title>Media Wing - Multi-Style Photo Card Generator</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts for Bengali -->
@@ -19,65 +19,58 @@
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
         <header class="text-center mb-6">
-            <h1 class="text-2xl sm:text-3xl font-bold text-amber-400">ICAB Media Wing</h1>
-            <p class="text-slate-400 text-sm">নিউজ ও ফটো কার্ড জেনারেটর</p>
+            <h1 class="text-2xl sm:text-3xl font-bold text-amber-400">Media Wing Photo Generator</h1>
+            <p class="text-slate-400 text-sm">আপনার পছন্দের ডিজাইন সিলেক্ট করে কার্ড তৈরি করুন</p>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Controls Form -->
             <div class="bg-slate-800 p-4 sm:p-6 rounded-xl shadow-lg border border-slate-700 space-y-4">
-                <h2 class="text-lg font-semibold text-amber-300 border-b border-slate-700 pb-2">খবরের তথ্য ও ছবি</h2>
+                <h2 class="text-lg font-semibold text-amber-300 border-b border-slate-700 pb-2">কার্ডের ডিজাইন ও তথ্য</h2>
                 
                 <!-- Template Selector -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">কার্ডের ধরন</label>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">টেমপ্লেট স্টাইল নির্বাচন করুন</label>
                     <select id="templateSelect" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm font-medium">
-                        <option value="press">প্রেস বিজ্ঞপ্তি / সাধারণ সংবাদ (Standard News)</option>
-                        <option value="breaking">জরুরি সংবাদ / ব্রেকিং নিউজ (Breaking News)</option>
-                        <option value="quote">উক্তি / বাণী কার্ড (Quote Card)</option>
-                        <option value="notice">নোটিশ / ঘোষণা (Notice & Event)</option>
+                        <option value="style1">স্টাইল ১: ইভেন্ট ও ফ্রেম কার্ড (১ম ছবির মতো)</option>
+                        <option value="style2">স্টাইল ২: নেতা ও শিরোনাম কার্ড (২য় ছবির মতো)</option>
+                        <option value="style3">স্টাইল ৩: বিবৃতি / বক্তব্য কার্ড (৩য় ছবির মতো)</option>
                     </select>
                 </div>
 
-                <!-- Category -->
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">ক্যাটাগরি / ট্যাগ</label>
-                    <input type="text" id="categoryInput" value="প্রেস বিজ্ঞপ্তি" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
-                </div>
-
-                <!-- Headline / Main Text -->
+                <!-- Main Text / Headline -->
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1" id="titleLabel">প্রধান শিরোনাম / মূল বার্তা</label>
-                    <textarea id="titleInput" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">এখানে আপনার শিরোনাম লিখুন...</textarea>
+                    <textarea id="titleInput" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">ফের আলোচনায় এমপি অলিউল্লাহ, কেন বারবার টার্গেটের শিকার হচ্ছেন তিনি?</textarea>
                 </div>
 
-                <!-- Subtitle / Description -->
+                <!-- Subtitle / Speaker Info -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1" id="extraLabel">ছোট বিবরণ বা হাইলাইট</label>
-                    <textarea id="subtitleInput" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">আইসিএবি মিডিয়া উইং আপডেট</textarea>
+                    <label class="block text-sm font-medium text-slate-300 mb-1" id="extraLabel">বক্তার নাম ও পদবি / বিবরণ</label>
+                    <textarea id="subtitleInput" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">মিয়া গোলাম পরওয়ার - সেক্রেটারি জেনারেল, বাংলাদেশ জামায়াতে ইসলামী</textarea>
                 </div>
 
                 <!-- Date & Footer -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-sm font-medium text-slate-300 mb-1">তারিখ</label>
-                        <input type="text" id="dateInput" value="১৭ নভেম্বর ২০২৬" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
+                        <input type="text" id="dateInput" value="১৫ নভেম্বর ২০২৬" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-300 mb-1">ফুটর টেক্সট</label>
-                        <input type="text" id="footerInput" value="ICAB Media Wing" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
+                        <label class="block text-sm font-medium text-slate-300 mb-1">ফুটর / ক্যাপশন টেক্সট</label>
+                        <input type="text" id="footerInput" value="< বিস্তারিতঃ ক্যাপশনে >" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
                     </div>
                 </div>
 
                 <!-- Logo Upload -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">সংগঠনের লোগো (স্থায়ীভাবে সংরক্ষিত)</label>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">লোগো / মনোগ্রাম (স্থায়ীভাবে সংরক্ষিত)</label>
                     <input type="file" id="logoUpload" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer">
                 </div>
 
-                <!-- News / Event Photo Upload -->
+                <!-- Main Subject / Event Photo Upload -->
                 <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">ইভেন্ট বা খবরের ছবি (ঐচ্ছিক)</label>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">মূল ছবি (ইভেন্ট বা নেতার ছবি)</label>
                     <input type="file" id="newsPhotoUpload" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-slate-950 hover:file:bg-sky-400 cursor-pointer">
                 </div>
 
@@ -101,9 +94,7 @@
         const canvas = document.getElementById('photoCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Inputs
         const templateSelect = document.getElementById('templateSelect');
-        const categoryInput = document.getElementById('categoryInput');
         const titleInput = document.getElementById('titleInput');
         const subtitleInput = document.getElementById('subtitleInput');
         const dateInput = document.getElementById('dateInput');
@@ -117,8 +108,8 @@
         let logoImage = null;
         let newsImage = null;
 
-        // Load saved logo from localStorage if available
-        const savedLogo = localStorage.getItem('icab_logo');
+        // Load saved logo from localStorage
+        const savedLogo = localStorage.getItem('media_wing_logo');
         if (savedLogo) {
             logoImage = new Image();
             logoImage.src = savedLogo;
@@ -127,13 +118,12 @@
             drawCard();
         }
 
-        // Handle logo upload and save to localStorage
         logoUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    localStorage.setItem('icab_logo', event.target.result);
+                    localStorage.setItem('media_wing_logo', event.target.result);
                     logoImage = new Image();
                     logoImage.src = event.target.result;
                     logoImage.onload = () => drawCard();
@@ -142,7 +132,6 @@
             }
         });
 
-        // Handle news/event photo upload
         newsPhotoUpload.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -156,35 +145,25 @@
             }
         });
 
-        // Dynamic labels based on template change
         templateSelect.addEventListener('change', function() {
             const val = this.value;
-            if (val === 'quote') {
-                titleLabel.innerText = 'বাণী বা উক্তির টেক্সট';
-                extraLabel.innerText = 'বক্তার নাম ও পদবি';
-                if(categoryInput.value === 'প্রেস বিজ্ঞপ্তি') categoryInput.value = 'বিশেষ বাণী';
-            } else if (val === 'breaking') {
-                titleLabel.innerText = 'ব্রেকিং নিউজ শিরোনাম';
-                extraLabel.innerText = 'সংক্ষিপ্ত বিবরণ';
-                if(categoryInput.value === 'বিশেষ বাণী' || categoryInput.value === 'প্রেস বিজ্ঞপ্তি') categoryInput.value = 'ব্রেকিং নিউজ';
-            } else if (val === 'notice') {
-                titleLabel.innerText = 'নোটিশের শিরোনাম বা বিষয়';
-                extraLabel.innerText = 'গুরুত্বপূর্ণ নির্দেশাবলী';
-                categoryInput.value = 'নোটিশ বোর্ড';
+            if (val === 'style2') {
+                titleLabel.innerText = 'প্রধান শিরোনাম';
+                extraLabel.innerText = 'বক্তার নাম ও পদবি (নিচে বাঁয়ে দেখাবে)';
+            } else if (val === 'style3') {
+                titleLabel.innerText = 'মূল বিবৃতি বা বক্তব্য';
+                extraLabel.innerText = 'নেতার নাম ও পদবি';
             } else {
                 titleLabel.innerText = 'প্রধান শিরোনাম / মূল বার্তা';
-                extraLabel.innerText = 'ছোট বিবরণ বা হাইলাইট';
-                categoryInput.value = 'প্রেস বিজ্ঞপ্তি';
+                extraLabel.innerText = 'ছোট বিবরণ বা সাবটাইটেল';
             }
             drawCard();
         });
 
-        // Event listeners for real-time update
-        [categoryInput, titleInput, subtitleInput, dateInput, footerInput].forEach(input => {
+        [titleInput, subtitleInput, dateInput, footerInput].forEach(input => {
             input.addEventListener('input', drawCard);
         });
 
-        // Multi-line and auto-wrap text renderer
         function drawMultiLineText(context, text, x, y, maxWidth, lineHeight) {
             const paragraphs = text.split('\n');
             let currentY = y;
@@ -199,9 +178,7 @@
             let line = '';
             let currentY = y;
 
-            if (text.trim() === '') {
-                return currentY + lineHeight;
-            }
+            if (text.trim() === '') return currentY + lineHeight;
 
             for (let n = 0; n < words.length; n++) {
                 const testLine = line + words[n] + ' ';
@@ -221,324 +198,221 @@
 
         function drawCard() {
             const template = templateSelect.value;
-            if (template === 'breaking') {
-                drawBreakingNewsCard();
-            } else if (template === 'quote') {
-                drawQuoteCard();
-            } else if (template === 'notice') {
-                drawNoticeCard();
+            if (template === 'style1') {
+                drawStyle1Card();
+            } else if (template === 'style2') {
+                drawStyle2Card();
             } else {
-                drawPressReleaseCard();
+                drawStyle3Card();
             }
         }
 
-        // Helper: Logo header
-        function drawLogoHeader() {
-            if (logoImage) {
-                const logoSize = 100;
-                ctx.drawImage(logoImage, 60, 30, logoSize, logoSize);
-            } else {
-                ctx.fillStyle = '#334155';
-                ctx.fillRect(60, 30, 100, 100);
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = 'bold 24px "Hind Siliguri", sans-serif';
-                ctx.fillText('LOGO', 75, 88);
-            }
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 44px "Hind Siliguri", sans-serif';
-            ctx.fillText('ICAB Media Wing', 185, 80);
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = '24px "Hind Siliguri", sans-serif';
-            ctx.fillText('Official Announcement & News Update', 185, 115);
-        }
-
-        // Helper: Footer
-        function drawFooter() {
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 980, 1080, 100);
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
-            ctx.fillText(footerInput.value, 60, 1038);
-
-            ctx.fillStyle = '#334155';
-            for(let i=0; i<5; i++) {
-                ctx.beginPath();
-                ctx.arc(950 + (i * 25), 1038, 5, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // Helper: Draw News Image if available
-        function drawNewsPhoto(yPos, height) {
-            if (newsImage) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.roundRect(60, yPos, 960, height, 12);
-                ctx.clip();
-                
-                // Draw image maintaining aspect ratio cover
-                const imgRatio = newsImage.width / newsImage.height;
-                let dw = 960;
-                let dh = height;
-                let dx = 60;
-                let dy = yPos;
-                
-                ctx.drawImage(newsImage, dx, dy, dw, dh);
-                ctx.restore();
-
-                // Border around image
-                ctx.strokeStyle = '#475569';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.roundRect(60, yPos, 960, height, 12);
-                ctx.stroke();
-                return true;
-            }
-            return false;
-        }
-
-        // 1. Press Release Template
-        function drawPressReleaseCard() {
+        // Style 1: Event & Frame Card (1st Image format)
+        function drawStyle1Card() {
+            // Background gradient (Deep Purple/Slate)
             const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
-            bgGrad.addColorStop(0, '#0a192f');
-            bgGrad.addColorStop(0.5, '#1e293b');
-            bgGrad.addColorStop(1, '#0f172a');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, 1080, 1080);
-
-            drawLogoHeader();
-
-            // Category Badge & Date
-            const categoryText = categoryInput.value || 'আপডেট';
-            ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
-            const catWidth = ctx.measureText(categoryText).width + 40;
-            
-            ctx.fillStyle = '#f59e0b';
-            ctx.beginPath();
-            ctx.roundRect(60, 160, catWidth, 48, 10);
-            ctx.fill();
-
-            ctx.fillStyle = '#0f172a';
-            ctx.fillText(categoryText, 80, 194);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '24px "Hind Siliguri", sans-serif';
-            ctx.textAlign = 'right';
-            ctx.fillText(dateInput.value, 1020, 194);
-            ctx.textAlign = 'left';
-
-            let nextY = 230;
-
-            // If news photo exists, draw it
-            if (newsImage) {
-                drawNewsPhoto(nextY, 320);
-                nextY += 345;
-            } else {
-                nextY += 30;
-            }
-
-            // Main Title
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 44px "Hind Siliguri", sans-serif';
-            let titleEnd = drawMultiLineText(ctx, titleInput.value, 60, nextY, 960, 60);
-
-            // Subtitle Box at bottom if space permits
-            const boxY = Math.max(titleEnd + 20, 780);
-            ctx.fillStyle = 'rgba(30, 41, 59, 0.8)';
-            ctx.beginPath();
-            ctx.roundRect(60, boxY, 960, 170, 14);
-            ctx.fill();
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.fillRect(60, boxY, 8, 170);
-
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '26px "Hind Siliguri", sans-serif';
-            drawMultiLineText(ctx, subtitleInput.value, 85, boxY + 45, 910, 36);
-
-            drawFooter();
-        }
-
-        // 2. Breaking News Template
-        function drawBreakingNewsCard() {
-            const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
-            bgGrad.addColorStop(0, '#450a0a');
+            bgGrad.addColorStop(0, '#2e1065');
             bgGrad.addColorStop(0.5, '#1e1b4b');
             bgGrad.addColorStop(1, '#09090b');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, 1080, 1080);
 
-            drawLogoHeader();
-
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath();
-            ctx.roundRect(60, 160, 240, 48, 8);
-            ctx.fill();
-
+            // Date on top right
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
-            ctx.fillText('🔴 ' + (categoryInput.value || 'ব্রেকিং নিউজ'), 75, 194);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '24px "Hind Siliguri", sans-serif';
+            ctx.font = '32px "Hind Siliguri", sans-serif';
             ctx.textAlign = 'right';
-            ctx.fillText(dateInput.value, 1020, 194);
+            ctx.fillText('তারিখ: ' + dateInput.value, 1020, 80);
             ctx.textAlign = 'left';
 
-            let nextY = 230;
-            if (newsImage) {
-                drawNewsPhoto(nextY, 300);
-                nextY += 325;
+            // Top Logo / Emblem area
+            if (logoImage) {
+                ctx.drawImage(logoImage, 465, 20, 150, 150);
             } else {
-                nextY += 30;
+                ctx.fillStyle = '#334155';
+                ctx.beginPath();
+                ctx.arc(540, 95, 70, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 22px "Hind Siliguri", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('LOGO', 540, 103);
+                ctx.textAlign = 'left';
             }
 
+            // Central Photo Frame with Yellow/Gold Border
+            const frameX = 90;
+            const frameY = 190;
+            const frameW = 900;
+            const frameH = 500;
+
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 46px "Hind Siliguri", sans-serif';
-            let titleEnd = drawMultiLineText(ctx, titleInput.value, 60, nextY, 960, 62);
+            ctx.fillRect(frameX - 6, frameY - 6, frameW + 12, frameH + 12);
 
-            const boxY = Math.max(titleEnd + 20, 780);
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
-            ctx.beginPath();
-            ctx.roundRect(60, boxY, 960, 170, 14);
-            ctx.fill();
+            if (newsImage) {
+                ctx.drawImage(newsImage, frameX, frameY, frameW, frameH);
+            } else {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(frameX, frameY, frameW, frameH);
+                ctx.fillStyle = '#64748b';
+                ctx.font = 'bold 36px "Hind Siliguri", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('ইভেন্ট বা খবরের ছবি এখানে থাকবে', 540, frameY + 260);
+                ctx.textAlign = 'left';
+            }
 
-            ctx.fillStyle = '#ef4444';
-            ctx.fillRect(60, boxY, 8, 170);
+            // Main Title below frame
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 48px "Hind Siliguri", sans-serif';
+            ctx.textAlign = 'center';
+            drawMultiLineText(ctx, titleInput.value, 540, 750, 960, 62);
+            ctx.textAlign = 'left';
 
-            ctx.fillStyle = '#fca5a5';
-            ctx.font = '26px "Hind Siliguri", sans-serif';
-            drawMultiLineText(ctx, subtitleInput.value, 85, boxY + 45, 910, 36);
+            // Footer bar
+            ctx.fillStyle = '#18181b';
+            ctx.fillRect(0, 980, 1080, 100);
 
-            drawFooter();
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 32px "Hind Siliguri", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(footerInput.value, 540, 1040);
+            ctx.textAlign = 'left';
         }
 
-        // 3. Quote Card Template
-        function drawQuoteCard() {
+        // Style 2: Leader & Headline Card (2nd Image format)
+        function drawStyle2Card() {
+            // Background gradient (Deep Green)
             const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
-            bgGrad.addColorStop(0, '#172554');
+            bgGrad.addColorStop(0, '#064e3b');
+            bgGrad.addColorStop(1, '#022c22');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            // Top Center Logo
+            if (logoImage) {
+                ctx.drawImage(logoImage, 465, 30, 150, 100);
+            } else {
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(440, 30, 200, 80);
+                ctx.fillStyle = '#022c22';
+                ctx.font = 'bold 28px "Hind Siliguri", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('MEDIA WING', 540, 80);
+                ctx.textAlign = 'left';
+            }
+
+            // Main Title at top
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 56px "Hind Siliguri", sans-serif';
+            ctx.textAlign = 'center';
+            drawMultiLineText(ctx, titleInput.value, 540, 170, 960, 74);
+            ctx.textAlign = 'left';
+
+            // Speaker Info Box on Bottom Left
+            ctx.fillStyle = 'rgba(2, 44, 34, 0.9)';
+            ctx.beginPath();
+            ctx.roundRect(60, 850, 480, 160, 16);
+            ctx.fill();
+
+            const subParts = subtitleInput.value.split('-');
+            const namePart = subParts[0] ? subParts[0].trim() : subtitleInput.value;
+            const titlePart = subParts[1] ? subParts[1].trim() : '';
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 38px "Hind Siliguri", sans-serif';
+            ctx.fillText(namePart, 90, 915);
+
+            ctx.fillStyle = '#34d399';
+            ctx.font = '26px "Hind Siliguri", sans-serif';
+            drawMultiLineText(ctx, titlePart, 90, 955, 430, 34);
+
+            // Leader Photo on Bottom Right
+            if (newsImage) {
+                ctx.drawImage(newsImage, 560, 450, 520, 630);
+            }
+        }
+
+        // Style 3: Statement / Quote Card (3rd Image format)
+        function drawStyle3Card() {
+            // Background gradient (Deep Green/Dark)
+            const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
+            bgGrad.addColorStop(0, '#064e3b');
+            bgGrad.addColorStop(0.5, '#042f2e');
             bgGrad.addColorStop(1, '#020617');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, 1080, 1080);
 
-            drawLogoHeader();
+            // Top Center Logo Badge
+            if (logoImage) {
+                ctx.drawImage(logoImage, 465, 30, 150, 110);
+            } else {
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.roundRect(430, 30, 220, 90, 12);
+                ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 26px "Hind Siliguri", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('MEDIA WING', 540, 85);
+                ctx.textAlign = 'left';
+            }
 
-            ctx.fillStyle = '#f59e0b';
-            ctx.beginPath();
-            ctx.roundRect(60, 160, 180, 48, 8);
-            ctx.fill();
-
-            ctx.fillStyle = '#0f172a';
-            ctx.font = 'bold 24px "Hind Siliguri", sans-serif';
-            ctx.fillText(categoryInput.value || 'বিশেষ বাণী', 75, 194);
-
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '24px "Hind Siliguri", sans-serif';
-            ctx.textAlign = 'right';
-            ctx.fillText(dateInput.value, 1020, 194);
+            // Statement / Headline in Middle
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 50px "Hind Siliguri", sans-serif';
+            ctx.textAlign = 'center';
+            drawMultiLineText(ctx, titleInput.value, 540, 180, 960, 68);
             ctx.textAlign = 'left';
 
-            ctx.fillStyle = '#f8fafc';
-            ctx.font = 'bold 42px "Hind Siliguri", sans-serif';
-            drawMultiLineText(ctx, '“ ' + titleInput.value + ' ”', 60, 270, 960, 62);
-
-            const boxY = 760;
-            ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+            // Divider Line
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.roundRect(60, boxY, 960, 190, 14);
-            ctx.fill();
+            ctx.moveTo(150, 560);
+            ctx.lineTo(930, 560);
+            ctx.stroke();
 
+            // Speaker Name & Designation below statement (Centered)
+            const subParts = subtitleInput.value.split('-');
+            const namePart = subParts[0] ? subParts[0].trim() : subtitleInput.value;
+            const titlePart = subParts[1] ? subParts[1].trim() : '';
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 44px "Hind Siliguri", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(namePart, 540, 630);
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '30px "Hind Siliguri", sans-serif';
+            ctx.fillText(titlePart, 540, 675);
+            ctx.textAlign = 'left';
+
+            // Date on Bottom Left
             ctx.fillStyle = '#f59e0b';
-            ctx.fillRect(60, boxY, 8, 190);
+            ctx.font = '28px "Hind Siliguri", sans-serif';
+            ctx.fillText(dateInput.value, 60, 1030);
 
-            // If news photo exists in quote (like speaker photo), we can draw a small avatar or thumbnail inside the quote box
+            // Speaker Photo at Bottom Right
             if (newsImage) {
                 ctx.save();
                 ctx.beginPath();
-                ctx.arc(140, boxY + 95, 55, 0, Math.PI * 2);
+                ctx.arc(880, 840, 180, 0, Math.PI * 2);
                 ctx.clip();
-                ctx.drawImage(newsImage, 85, boxY + 40, 110, 110);
+                ctx.drawImage(newsImage, 700, 660, 360, 360);
                 ctx.restore();
 
+                // Gold border ring around speaker photo
                 ctx.strokeStyle = '#f59e0b';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 6;
                 ctx.beginPath();
-                ctx.arc(140, boxY + 95, 55, 0, Math.PI * 2);
+                ctx.arc(880, 840, 180, 0, Math.PI * 2);
                 ctx.stroke();
-
-                ctx.fillStyle = '#fbbf24';
-                ctx.font = 'bold 30px "Hind Siliguri", sans-serif';
-                drawMultiLineText(ctx, subtitleInput.value, 220, boxY + 75, 780, 40);
-            } else {
-                ctx.fillStyle = '#fbbf24';
-                ctx.font = 'bold 32px "Hind Siliguri", sans-serif';
-                drawMultiLineText(ctx, subtitleInput.value, 90, boxY + 75, 900, 42);
             }
-
-            drawFooter();
-        }
-
-        // 4. Notice & Event Template
-        function drawNoticeCard() {
-            const bgGrad = ctx.createLinearGradient(0, 0, 1080, 1080);
-            bgGrad.addColorStop(0, '#0f766e');
-            bgGrad.addColorStop(0.5, '#134e4a');
-            bgGrad.addColorStop(1, '#042f2e');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, 1080, 1080);
-
-            drawLogoHeader();
-
-            ctx.fillStyle = '#2dd4bf';
-            ctx.beginPath();
-            ctx.roundRect(60, 160, 200, 48, 8);
-            ctx.fill();
-
-            ctx.fillStyle = '#042f2e';
-            ctx.font = 'bold 24px "Hind Siliguri", sans-serif';
-            ctx.fillText(categoryInput.value || 'নোটিশ বোর্ড', 75, 194);
-
-            ctx.fillStyle = '#99f6e4';
-            ctx.font = '24px "Hind Siliguri", sans-serif';
-            ctx.textAlign = 'right';
-            ctx.fillText(dateInput.value, 1020, 194);
-            ctx.textAlign = 'left';
-
-            let nextY = 230;
-            if (newsImage) {
-                drawNewsPhoto(nextY, 300);
-                nextY += 325;
-            } else {
-                nextY += 30;
-            }
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 44px "Hind Siliguri", sans-serif';
-            let titleEnd = drawMultiLineText(ctx, titleInput.value, 60, nextY, 960, 60);
-
-            const boxY = Math.max(titleEnd + 20, 780);
-            ctx.fillStyle = 'rgba(20, 83, 75, 0.8)';
-            ctx.beginPath();
-            ctx.roundRect(60, boxY, 960, 170, 14);
-            ctx.fill();
-
-            ctx.fillStyle = '#2dd4bf';
-            ctx.fillRect(60, boxY, 8, 170);
-
-            ctx.fillStyle = '#ccfbf1';
-            ctx.font = '26px "Hind Siliguri", sans-serif';
-            drawMultiLineText(ctx, subtitleInput.value, 85, boxY + 45, 910, 36);
-
-            drawFooter();
         }
 
         // Download Action
         downloadBtn.addEventListener('click', function() {
             const link = document.createElement('a');
-            link.download = 'icab-news-card-' + Date.now() + '.png';
+            link.download = 'media-wing-card-' + Date.now() + '.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
