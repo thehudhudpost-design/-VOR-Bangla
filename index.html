@@ -16,7 +16,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-100 min-y-screen pb-12">
+<body class="bg-slate-100 min-h-screen pb-12">
 
     <div class="max-w-md mx-auto p-4">
         <header class="text-center my-4">
@@ -35,7 +35,7 @@
                         <div>
                             <h3 id="displayPageName" class="font-bold text-sm leading-tight text-slate-900">ICAB Media Wing</h3>
                             <div class="flex items-center space-x-1 text-[11px] text-slate-500">
-                                <span id="displayDate">৩১ অক্টোবর</span>
+                                <span id="displayDate">তারিখ</span>
                                 <span>•</span>
                                 <!-- Globe Icon -->
                                 <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -44,8 +44,8 @@
                     </div>
                 </div>
 
-                <!-- Main News Image Container -->
-                <div class="relative w-full aspect-[4/3] bg-slate-900 overflow-hidden">
+                <!-- Main News Image Container (Compact & Balanced) -->
+                <div class="relative w-full h-56 bg-slate-900 overflow-hidden">
                     <img id="previewImage" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80" alt="News Image" class="w-full h-full object-cover">
                     
                     <!-- Top-Right Watermark / Small Logo -->
@@ -95,8 +95,8 @@
                     <input type="text" id="inputPageName" value="ICAB Media Wing" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">তারিখ</label>
-                    <input type="text" id="inputDate" value="৩১ অক্টোবর" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
+                    <label class="block text-xs font-medium text-slate-600 mb-1">তারিখ (অটো আপডেট)</label>
+                    <input type="text" id="inputDate" class="w-full p-2.5 text-sm bg-slate-50 border border-slate-300 rounded-lg outline-none">
                 </div>
             </div>
 
@@ -138,7 +138,7 @@
         </div>
     </div>
 
-    <!-- Script to handle live preview and download -->
+    <!-- Script to handle live preview and auto date -->
     <script>
         const inputPageName = document.getElementById('inputPageName');
         const inputDate = document.getElementById('inputDate');
@@ -154,6 +154,18 @@
         const displayDesig = document.getElementById('displayDesig');
         const authorBox = document.getElementById('authorBox');
         const cardThemeBg = document.getElementById('cardThemeBg');
+
+        // Auto set current date in Bengali format
+        const months = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+        const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        function toBengaliNum(num) {
+            return num.toString().split('').map(d => bengaliDigits[d] !== undefined ? bengaliDigits[d] : d).join('');
+        }
+        const today = new Date();
+        const autoFormattedDate = toBengaliNum(today.getDate()) + ' ' + months[today.getMonth()];
+        
+        inputDate.value = autoFormattedDate;
+        displayDate.innerText = autoFormattedDate;
 
         // Live text update handlers
         inputPageName.addEventListener('input', (e) => displayPageName.innerText = e.target.value);
